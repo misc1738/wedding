@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import AnimatedContent from './bits/AnimatedContent';
+import InfiniteSpiral from './bits/InfiniteSpiral';
 import SectionHeading from './SectionHeading';
 import Lightbox from './Lightbox';
 import FloralCorner from './art/FloralCorner';
@@ -84,6 +85,21 @@ export default function Gallery() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const photos = photoItems();
   const items: GalleryItem[] = [...photos, ...PLACEHOLDERS];
+  const spiralItems = photos.length
+    ? photos.map((photo) => ({
+        src: photo.src ?? '/invitation.png',
+        alt: photo.alt ?? photo.label,
+        label: photo.label,
+        id: photo.label,
+      }))
+    : [
+        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation' },
+        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-2' },
+        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-3' },
+        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-4' },
+        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-5' },
+        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-6' },
+      ];
 
   return (
     <section id="gallery" className="section-pad relative bg-cream scroll-mt-20">
@@ -95,7 +111,39 @@ export default function Gallery() {
       />
 
       <div className="mx-auto mt-14 max-w-6xl">
-        <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
+        <div className="relative overflow-hidden rounded-[2rem] border border-gold/40 bg-field-deep px-4 py-5 shadow-[0_26px_70px_-30px_rgba(46,50,39,0.7)] md:px-6 md:py-7">
+          <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-gold-light/80">Spiral story</p>
+              <h3 className="mt-2 font-script text-[clamp(2rem,4vw,3.25rem)] text-cream">
+                Our little world in motion
+              </h3>
+            </div>
+            <p className="max-w-md text-sm italic text-cream/65">
+              A cinematic loop of the photos we love most — it smooths beautifully as new images are added.
+            </p>
+          </div>
+
+          <div className="h-[360px] overflow-hidden rounded-[1.5rem] border border-gold/25 bg-[radial-gradient(circle_at_top,_rgba(247,243,232,0.18),_transparent_38%),linear-gradient(180deg,#48513f_0%,#2e3227_100%)] md:h-[520px]">
+            <InfiniteSpiral
+              items={spiralItems}
+              animationMode="all"
+              speed={0.55}
+              radius={170}
+              cardWidth={120}
+              cardHeight={120}
+              verticalSpacing={58}
+              perspective={1100}
+              cardRadius={18}
+              centerScale={1.2}
+              edgeBlur={6}
+              cardsPerTurn={7}
+              pauseOnHover
+            />
+          </div>
+        </div>
+
+        <div className="mt-12 columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5 [&>*]:break-inside-avoid">
           {items.map((item, index) => (
             <AnimatedContent
               key={`${item.label}-${index}`}
