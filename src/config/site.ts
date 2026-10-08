@@ -176,11 +176,6 @@ export const gifts = {
     'Your presence is the gift we want. If you would still like to give, a contribution towards our first home would mean a great deal to us.',
   options: [
     {
-      label: 'M-Pesa',
-      value: 'Paybill 4075921  ·  Account 261126',
-      detail: 'Use your own name as the account reference so we can thank you properly.',
-    },
-    {
       label: 'Cash envelope',
       value: 'On the day',
       detail: 'There will be a card box at the reception entrance, or hand it to either family.',

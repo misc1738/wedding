@@ -3,7 +3,7 @@ import SectionHeading from './SectionHeading';
 import FloralCorner from './art/FloralCorner';
 import { gifts } from '../config/site';
 
-/** Chapter VI — M-Pesa and cash envelope gifting. */
+/** Chapter VI — cash envelope gifting. */
 export default function Gifts() {
   return (
     <section
