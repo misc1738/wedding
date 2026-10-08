@@ -351,8 +351,8 @@ export default function RsvpForm() {
                     Send response
                   </button>
                   <p className="text-center text-xs italic text-cream/50">
-                    Your reply is saved on this device. Quote the reference if you
-                    need to change it.
+                    Your reply is saved securely. Quote the reference if you need to
+                    change it.
                   </p>
                 </div>
               </form>

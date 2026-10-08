@@ -2,10 +2,8 @@
  * RSVP storage sits behind this adapter so the collection mechanism can change
  * without touching a single component.
  *
- * Default = localStorage, which keeps the response **in the guest's own browser**.
- * That makes the form fully functional offline but does not deliver the answer to
- * the couple. Set VITE_RSVP_ENDPOINT in .env to POST each response somewhere real
- * instead — no other file changes.
+ * Responses are submitted to Supabase and mirrored to localStorage so the form
+ * still shows a confirmation if the network is briefly unavailable.
  *
  * The admin page can merge responses gathered elsewhere via JSON import.
  */
@@ -26,8 +24,7 @@ export type RsvpRecord = {
 export type RsvpInput = Omit<RsvpRecord, 'id' | 'reference' | 'submittedAt'>;
 
 const STORAGE_KEY = 'mw_rsvps_v1';
-
-const ENDPOINT = import.meta.env.VITE_RSVP_ENDPOINT as string | undefined;
+import { supabase } from './supabase';
 
 function readAll(): RsvpRecord[] {
   try {
@@ -79,22 +76,49 @@ export function save(input: RsvpInput): RsvpRecord {
   const all = readAll();
   all.push(record);
   writeAll(all);
-
-  if (ENDPOINT) void pushRemote(record);
+  void pushRemote(record);
 
   return record;
 }
 
 async function pushRemote(record: RsvpRecord) {
   try {
-    await fetch(ENDPOINT!, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(record),
+    const { error } = await supabase.from('rsvps').upsert({
+      id: record.id,
+      reference: record.reference,
+      submitted_at: record.submittedAt,
+      name: record.name,
+      contact: record.contact,
+      attending: record.attending,
+      guests: record.guests,
+      meal: record.meal,
+      song: record.song,
+      note: record.note,
     });
-  } catch {
-    /* Network is down — the local copy above remains the source of truth. */
+    if (error) throw error;
+  } catch (error) {
+    console.error('Could not sync RSVP to Supabase.', error);
   }
+}
+
+export async function listRemote(): Promise<RsvpRecord[]> {
+  const { data, error } = await supabase
+    .from('rsvps')
+    .select('*')
+    .order('submitted_at', { ascending: false });
+  if (error) throw error;
+  return (data ?? []).map((record) => ({
+    id: record.id,
+    reference: record.reference,
+    submittedAt: record.submitted_at,
+    name: record.name,
+    contact: record.contact,
+    attending: record.attending,
+    guests: record.guests,
+    meal: record.meal,
+    song: record.song,
+    note: record.note,
+  }));
 }
 
 /** Merge externally collected responses, de-duplicating by id or reference. */
@@ -135,6 +159,11 @@ export function clearAll() {
   } catch {
     /* nothing to clear */
   }
+}
+
+export async function clearRemote() {
+  const { error } = await supabase.from('rsvps').delete().not('id', 'is', null);
+  if (error) throw error;
 }
 
 const CSV_COLUMNS: { key: keyof RsvpRecord; label: string }[] = [

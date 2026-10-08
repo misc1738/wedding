@@ -1,22 +1,30 @@
-import { useMemo, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { isUnlocked, lock, verifyPasscode } from '../lib/admin';
-import { clearAll, list, merge, toCsv, type RsvpRecord } from '../lib/rsvpStore';
+import { clearRemote, listRemote, merge, toCsv, type RsvpRecord } from '../lib/rsvpStore';
 import { downloadText } from '../lib/ics';
-import { ADMIN, couple } from '../config/site';
+import { couple } from '../config/site';
+import { supabase } from '../lib/supabase';
 
 type ImportOutcome = { added: number; skipped: number } | null;
 
 export default function Admin() {
-  const [unlocked, setUnlocked] = useState(() => isUnlocked());
-  const [passcode, setPasscode] = useState('');
+  const [unlocked, setUnlocked] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [version, setVersion] = useState(0);
   const [importOutcome, setImportOutcome] = useState<ImportOutcome>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const records = useMemo<RsvpRecord[]>(() => list(), [version]);
+  const [records, setRecords] = useState<RsvpRecord[]>([]);
+
+  useEffect(() => {
+    if (!unlocked) return;
+    void listRemote()
+      .then(setRecords)
+      .catch(() => setError('Could not load RSVP responses from Supabase.'));
+  }, [unlocked, version]);
 
   const stats = useMemo(() => {
     const attending = records.filter((r) => r.attending === 'yes');
@@ -32,13 +40,13 @@ export default function Admin() {
     event.preventDefault();
     setBusy(true);
     setError('');
-    const ok = await verifyPasscode(passcode);
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (ok) {
+    if (!authError) {
       setUnlocked(true);
-      setPasscode('');
+      setPassword('');
     } else {
-      setError('That passcode is not right.');
+      setError(authError.message);
     }
   };
 
@@ -71,31 +79,35 @@ export default function Admin() {
           </h1>
           <div className="hairline mx-auto my-5 w-24" aria-hidden="true" />
 
-          <label htmlFor="passcode" className="sr-only">
-            Passcode
+          <label htmlFor="admin-email" className="sr-only">
+            Email
           </label>
           <input
-            id="passcode"
-            type="password"
-            inputMode="numeric"
-            autoComplete="off"
-            className="field-input text-center tracking-[0.5em]"
-            placeholder="••••••"
-            value={passcode}
-            onChange={(e) => setPasscode(e.target.value)}
+            id="admin-email"
+            type="email"
+            autoComplete="email"
+            className="field-input text-center"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             aria-invalid={Boolean(error)}
-            aria-describedby={error ? 'passcode-error' : 'passcode-hint'}
+            aria-describedby={error ? 'admin-error' : undefined}
           />
 
-          {error ? (
-            <p id="passcode-error" className="mt-2 text-sm text-blush-deep">
-              {error}
-            </p>
-          ) : (
-            <p id="passcode-hint" className="mt-2 text-xs italic text-cream/45">
-              {ADMIN.hint}
-            </p>
-          )}
+          <label htmlFor="admin-password" className="sr-only">Password</label>
+          <input
+            id="admin-password"
+            type="password"
+            autoComplete="current-password"
+            className="field-input mt-3 text-center"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? 'admin-error' : undefined}
+          />
+
+          {error ? <p id="admin-error" className="mt-2 text-sm text-blush-deep">{error}</p> : null}
 
           <button
             type="submit"
@@ -143,10 +155,7 @@ export default function Admin() {
             <button
               type="button"
               className="btn-gold"
-              onClick={() => {
-                lock();
-                setUnlocked(false);
-              }}
+              onClick={() => void supabase.auth.signOut().then(() => setUnlocked(false))}
             >
               Lock
             </button>
@@ -179,9 +188,8 @@ export default function Admin() {
         </section>
 
         <p className="mt-4 rounded border border-gold/30 bg-white/50 px-4 py-3 text-sm text-ink/70">
-          Responses are stored in this browser. Use <strong>Export CSV</strong> to
-          save a copy, or <strong>Import JSON</strong> to merge replies gathered on
-          another device.
+        Responses are stored centrally in Supabase. Use <strong>Export CSV</strong> to
+        keep a local copy, or <strong>Import JSON</strong> to merge replies gathered elsewhere.
         </p>
 
         {importOutcome ? (
@@ -249,10 +257,10 @@ export default function Admin() {
               type="button"
               className="text-sm text-ink/45 underline decoration-dotted underline-offset-4 hover:text-plum"
               onClick={() => {
-                if (window.confirm('Delete every response stored in this browser?')) {
-                  clearAll();
-                  setVersion((v) => v + 1);
-                }
+                if (!window.confirm('Delete every RSVP from Supabase?')) return;
+                void clearRemote()
+                  .then(() => setVersion((v) => v + 1))
+                  .catch(() => setError('Could not clear responses from Supabase.'));
               }}
             >
               Clear all responses from this browser
