@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { clearRemote, listRemote, merge, toCsv, type RsvpRecord } from '../lib/rsvpStore';
 import { downloadText } from '../lib/ics';
 import { couple } from '../config/site';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 type ImportOutcome = { added: number; skipped: number } | null;
 
@@ -38,6 +38,11 @@ export default function Admin() {
 
   const onUnlock = async (event: FormEvent) => {
     event.preventDefault();
+    if (!isSupabaseConfigured) {
+      setError('The admin dashboard is unavailable until Supabase is configured.');
+      return;
+    }
+
     setBusy(true);
     setError('');
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });

@@ -24,7 +24,7 @@ export type RsvpRecord = {
 export type RsvpInput = Omit<RsvpRecord, 'id' | 'reference' | 'submittedAt'>;
 
 const STORAGE_KEY = 'mw_rsvps_v1';
-import { supabase } from './supabase';
+import { isSupabaseConfigured, supabase } from './supabase';
 
 function readAll(): RsvpRecord[] {
   try {
@@ -82,6 +82,11 @@ export function save(input: RsvpInput): RsvpRecord {
 }
 
 async function pushRemote(record: RsvpRecord) {
+  if (!isSupabaseConfigured) {
+    console.warn('Supabase is not configured; RSVP was saved locally only.', record.reference);
+    return;
+  }
+
   try {
     const { error } = await supabase.from('rsvps').insert({
       id: record.id,
@@ -102,6 +107,10 @@ async function pushRemote(record: RsvpRecord) {
 }
 
 export async function listRemote(): Promise<RsvpRecord[]> {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured.');
+  }
+
   const { data, error } = await supabase
     .from('rsvps')
     .select('*')
@@ -162,6 +171,10 @@ export function clearAll() {
 }
 
 export async function clearRemote() {
+  if (!isSupabaseConfigured) {
+    throw new Error('Supabase is not configured.');
+  }
+
   const { error } = await supabase.from('rsvps').delete().not('id', 'is', null);
   if (error) throw error;
 }
