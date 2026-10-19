@@ -83,7 +83,7 @@ export function save(input: RsvpInput): RsvpRecord {
 
 async function pushRemote(record: RsvpRecord) {
   try {
-    const { error } = await supabase.from('rsvps').upsert({
+    const { error } = await supabase.from('rsvps').insert({
       id: record.id,
       reference: record.reference,
       submitted_at: record.submittedAt,
