@@ -2,6 +2,7 @@ import AnimatedContent from './bits/AnimatedContent';
 import SectionHeading from './SectionHeading';
 import FloralCorner from './art/FloralCorner';
 import { story } from '../config/site';
+import { photos } from '../config/photos';
 
 /** Chapter II — placeholder narrative the couple can rewrite in site.ts. */
 export default function Story() {
@@ -34,34 +35,60 @@ export default function Story() {
           tone="dark"
         />
 
-        <ol className="mx-auto mt-16 max-w-4xl space-y-10 md:space-y-0">
-          {story.milestones.map((milestone, index) => (
-            <li key={milestone.year} className="md:grid md:grid-cols-2 md:gap-14">
-              <AnimatedContent
-                direction={index % 2 === 0 ? 'left' : 'right'}
-                distance={40}
-                delay={index * 90}
-                className={`${
-                  index % 2 === 0
-                    ? 'md:col-start-1 md:text-right'
-                    : 'md:col-start-2 md:row-start-1'
-                } pb-10 md:pb-20`}
-              >
-                <p className="chapter-numeral text-2xl text-gold-light">
-                  {milestone.year}
-                </p>
-                <h3 className="mt-2 font-serif text-[1.5rem] leading-snug text-cream">
-                  {milestone.title}
-                </h3>
-                <p className="mt-2 text-[1.02rem] leading-relaxed text-cream/75">
-                  {milestone.detail}
-                </p>
-              </AnimatedContent>
+        <ol className="mx-auto mt-16 max-w-5xl">
+          {story.milestones.map((milestone, index) => {
+            const photo = photos.story[index % photos.story.length];
+            const photoLeft = index % 2 === 1;
 
-              {/* Empty half keeps the zig-zag rhythm on desktop */}
-              <div className="hidden md:block" aria-hidden="true" />
-            </li>
-          ))}
+            return (
+              <li
+                key={milestone.year}
+                className="border-t border-gold/15 py-10 first:border-t-0 first:pt-0 md:grid md:grid-cols-2 md:items-center md:gap-16 md:py-14"
+              >
+                <AnimatedContent
+                  direction={index % 2 === 0 ? 'left' : 'right'}
+                  distance={40}
+                  delay={index * 90}
+                  className={`${photoLeft ? 'md:order-2' : 'md:order-1'} ${
+                    photoLeft ? 'md:text-left' : 'md:text-right'
+                  }`}
+                >
+                  <p className="chapter-numeral text-2xl text-gold-light">{milestone.year}</p>
+                  <h3 className="mt-2 font-serif text-[1.5rem] leading-snug text-cream">
+                    {milestone.title}
+                  </h3>
+                  <p className="mt-3 text-[1.02rem] leading-relaxed text-cream/75">
+                    {milestone.detail}
+                  </p>
+                </AnimatedContent>
+
+                {photo ? (
+                  <AnimatedContent
+                    direction={photoLeft ? 'left' : 'right'}
+                    distance={40}
+                    delay={index * 90 + 80}
+                    className={`${photoLeft ? 'md:order-1' : 'md:order-2'} mt-8 md:mt-0`}
+                  >
+                    <figure className="relative w-full max-w-[21rem] md:mx-auto">
+                      <div className="relative overflow-hidden bg-cream/5 p-2 shadow-[0_28px_60px_-34px_rgba(0,0,0,0.85)] ring-1 ring-gold/40">
+                        <img
+                          src={photo.src}
+                          alt={photo.alt}
+                          loading="lazy"
+                          decoding="async"
+                          className="aspect-[4/5] w-full object-cover"
+                        />
+                      </div>
+                      <figcaption className="mt-3 flex items-center gap-3 font-ui text-[0.6rem] uppercase tracking-[0.28em] text-gold-light/75">
+                        <span className="h-px w-6 bg-gold/50" aria-hidden="true" />
+                        {photo.label}
+                      </figcaption>
+                    </figure>
+                  </AnimatedContent>
+                ) : null}
+              </li>
+            );
+          })}
         </ol>
 
         <AnimatedContent className="mx-auto mt-16 max-w-xl text-center">

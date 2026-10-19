@@ -1,6 +1,7 @@
 import Nav from '../components/Nav';
 import Hero from '../components/Hero';
 import Invitation from '../components/Invitation';
+import PortraitFeature from '../components/PortraitFeature';
 import Schedule from '../components/Schedule';
 import Story from '../components/Story';
 import Gallery from '../components/Gallery';
@@ -18,6 +19,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <PortraitFeature />
         <Invitation />
         <Schedule />
         <Story />

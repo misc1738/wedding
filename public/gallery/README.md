@@ -1,27 +1,36 @@
-# Gallery — drop photos here
+# Gallery — the photos
 
-Put your wedding and engagement photos in **this folder** and rebuild.
+The photos on the site live in **this folder** and are described, in order, in
+[`src/config/photos.ts`](../../src/config/photos.ts).
 
 ```
 public/gallery/
-  engagement-01.jpg
-  beach-dusk.png
-  the-dog.webp
+  garden-portrait.webp
+  in-our-element.webp
+  she-said-yes.webp
+  …
 ```
 
-- Accepted extensions: `.jpg` `.jpeg` `.png` `.webp` `.avif`
-- Any size works — the grid crops to a tile shape automatically
-- Filenames become captions: `beach-dusk.jpg` → “beach dusk”
-- Ordering is alphabetical, so prefix with numbers to control placement:
-  `01-lead.jpg`, `02-lead.jpg`, …
+## Swapping or adding a photo
 
-Then run:
+1. Drop the file in this folder (`.jpg` `.jpeg` `.png` `.webp` `.avif` all work).
+2. Add an entry to `photos.gallery` in `src/config/photos.ts` with the path, a
+   short caption and alt text.
 
-```bash
-npm run build     # or just save while `npm run dev` is running
-```
+Anything in this folder that is **not** listed in `photos.ts` is still picked up
+and appended to the end of the gallery automatically, so a quick drop-and-rebuild
+always works.
 
-Photos appear at the front of the gallery; the drawn artwork fills whatever
-slots are left over so the grid is never half empty.
+- `orientation` controls the tile shape: `portrait` (3:4), `square`, `landscape` (4:3)
+- `photos.story` pairs one picture with each milestone in `site.ts`
+- `photos.feature` is the large arch-topped portrait under the hero
+- `photos.featureDetail` is the small square print tucked into its corner
 
-To remove a photo, delete the file — no code changes needed.
+The same files are used by the spiral and the full-screen lightbox, so a photo
+only needs adding once.
+
+## Exporting
+
+Keep photos around 1400 px on the long edge and under ~250 KB each. WebP is
+smallest; JPEG is fine. The originals from the shoot live in `assets-src/` and
+are ignored by git.

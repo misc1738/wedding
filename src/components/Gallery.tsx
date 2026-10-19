@@ -4,28 +4,28 @@ import InfiniteSpiral from './bits/InfiniteSpiral';
 import SectionHeading from './SectionHeading';
 import Lightbox from './Lightbox';
 import FloralCorner from './art/FloralCorner';
+import { photos, ratioClass, type Photo } from '../config/photos';
 
 export type GalleryItem = {
   src?: string;
   alt?: string;
   label: string;
   /** Which built-in artwork to draw when there is no photo. */
-  art: number;
+  art?: number;
   /** Aspect ratio class for the masonry tile. */
   ratio: string;
 };
 
 /**
- * Drop photo files into `public/gallery/` and rebuild — they appear here
- * automatically. Anything you have not supplied is filled with drawn artwork
- * so the grid is never full of holes.
+ * Photos in `public/gallery/` that are not named in `src/config/photos.ts`
+ * are still picked up and added after the curated ones.
  */
 const PHOTO_MODULES = import.meta.glob(
   '../../public/gallery/*.{jpg,jpeg,png,webp,avif}',
   { eager: true, query: '?url', import: 'default' },
 ) as Record<string, string>;
 
-const PLACEHOLDERS: GalleryItem[] = [
+const FALLBACK: GalleryItem[] = [
   { label: 'The bouquet', art: 0, ratio: 'aspect-[3/4]' },
   { label: 'Table setting', art: 1, ratio: 'aspect-square' },
   { label: 'Bridal party', art: 2, ratio: 'aspect-[4/5]' },
@@ -43,20 +43,36 @@ const ART = [
   { from: '#C98A90', to: '#8C9E7E' },
 ];
 
-function photoItems(): GalleryItem[] {
-  return Object.entries(PHOTO_MODULES)
+function toItem(photo: Photo): GalleryItem {
+  return {
+    src: photo.src,
+    alt: photo.alt,
+    label: photo.label,
+    ratio: ratioClass[photo.orientation],
+  };
+}
+
+/** Curated photos first, then anything else dropped in the folder. */
+function galleryItems(): GalleryItem[] {
+  const curated = photos.gallery.map(toItem);
+  const known = new Set(photos.gallery.map((photo) => photo.src));
+
+  const extras = Object.entries(PHOTO_MODULES)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([path, src], index) => {
+    .map(([path, src]) => ({ path, src }))
+    .filter(({ src }) => !known.has(src))
+    .map(({ path, src }, index) => {
       const name = path.split('/').pop() ?? 'photo';
       const label = name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ');
       return {
         src,
         alt: label,
         label,
-        art: index % ART.length,
-        ratio: index % 3 === 1 ? 'aspect-square' : 'aspect-[4/5]',
+        ratio: index % 3 === 1 ? 'aspect-[4/3]' : 'aspect-[3/4]',
       };
     });
+
+  return curated.length ? [...curated, ...extras] : FALLBACK;
 }
 
 function ArtTile({ art, label, ratio }: { art: number; label: string; ratio: string }) {
@@ -83,31 +99,25 @@ function ArtTile({ art, label, ratio }: { art: number; label: string; ratio: str
 
 export default function Gallery() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const photos = photoItems();
-  const items: GalleryItem[] = [...photos, ...PLACEHOLDERS];
-  const spiralItems = photos.length
-    ? photos.map((photo) => ({
-        src: photo.src ?? '/invitation.png',
-        alt: photo.alt ?? photo.label,
-        label: photo.label,
-        id: photo.label,
-      }))
-    : [
-        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation' },
-        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-2' },
-        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-3' },
-        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-4' },
-        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-5' },
-        { src: '/invitation.png', alt: 'Invitation cover', label: 'Invitation', id: 'invitation-6' },
-      ];
+  const items = galleryItems();
+  const spiralItems = items
+    .filter((item) => item.src)
+    .map((item, index) => ({
+      src: item.src as string,
+      alt: item.alt ?? item.label,
+      label: item.label,
+      id: `${item.label}-${index}`,
+    }));
 
   return (
-    <section id="gallery" className="section-pad relative bg-cream scroll-mt-20">
+    <section id="gallery" className="section-pad relative overflow-hidden bg-cream scroll-mt-20">
+      <FloralCorner className="pointer-events-none absolute -right-10 top-8 h-48 w-48 opacity-20" />
+
       <SectionHeading
         chapter="III"
         eyebrow="Moments"
         title="Gallery"
-        intro="A few frames from the build-up. Add your own photos to the gallery folder and they will take their place here."
+        intro="A handful of frames from before the day itself — the engagement, the celebrations, and the ordinary afternoons we keep coming back to."
       />
 
       <div className="mx-auto mt-14 max-w-6xl">
@@ -120,7 +130,8 @@ export default function Gallery() {
               </h3>
             </div>
             <p className="max-w-md text-sm italic text-cream/65">
-              A cinematic loop of the photos we love most — it smooths beautifully as new images are added.
+              A cinematic loop of the photos we love most — it smooths beautifully as new images are
+              added.
             </p>
           </div>
 
@@ -129,15 +140,15 @@ export default function Gallery() {
               items={spiralItems}
               animationMode="all"
               speed={0.55}
-              radius={170}
-              cardWidth={120}
-              cardHeight={120}
-              verticalSpacing={58}
-              perspective={1100}
-              cardRadius={18}
-              centerScale={1.2}
-              edgeBlur={6}
-              cardsPerTurn={7}
+              radius={300}
+              cardWidth={136}
+              cardHeight={136}
+              verticalSpacing={68}
+              perspective={1200}
+              cardRadius={20}
+              centerScale={1.18}
+              edgeBlur={7}
+              cardsPerTurn={8}
               pauseOnHover
             />
           </div>
@@ -147,7 +158,7 @@ export default function Gallery() {
           {items.map((item, index) => (
             <AnimatedContent
               key={`${item.label}-${index}`}
-              delay={(index % 3) * 90}
+              delay={(index % 3) * 80}
               threshold={0.05}
             >
               <button
@@ -162,31 +173,28 @@ export default function Gallery() {
                       src={item.src}
                       alt={item.alt ?? item.label}
                       loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                      decoding="async"
+                      className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
                     />
                   </div>
                 ) : (
-                  <ArtTile art={item.art} label={item.label} ratio={item.ratio} />
+                  <ArtTile art={item.art ?? 0} label={item.label} ratio={item.ratio} />
                 )}
 
                 <span
-                  className="pointer-events-none absolute inset-0 bg-field-deep/0 transition-colors duration-500 group-hover:bg-field-deep/35"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-field-deep/70 via-field-deep/0 to-field-deep/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   aria-hidden="true"
                 />
                 <span className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                  <span className="font-script text-xl text-cream">
-                    {item.label}
-                  </span>
+                  <span className="font-script text-xl text-cream">{item.label}</span>
                 </span>
               </button>
             </AnimatedContent>
           ))}
         </div>
 
-        <p className="mt-8 text-center text-sm italic text-ink/55">
-          {photos.length > 0
-            ? `${photos.length} photo${photos.length === 1 ? '' : 's'} loaded from the gallery folder.`
-            : 'No photos added yet — the drawn artwork stands in until you drop some in.'}
+        <p className="mt-10 text-center text-sm italic text-ink/55">
+          Tap any frame to see it full size — arrow keys move through the set.
         </p>
       </div>
 

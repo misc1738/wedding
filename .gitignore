@@ -6,3 +6,10 @@ dist/
 .env
 .env.local
 .env.*.local
+
+# Original photo files from the shoot (the optimised copies live in public/gallery)
+assets-src/
+
+# Local scratch: screenshot harness output
+.tmp-assets/
+.edge-profile*/
