@@ -62,7 +62,9 @@ export function list(): RsvpRecord[] {
   return readAll().sort((a, b) => b.submittedAt.localeCompare(a.submittedAt));
 }
 
-export function save(input: RsvpInput): RsvpRecord {
+export async function save(
+  input: RsvpInput,
+): Promise<{ record: RsvpRecord; remoteSynced: boolean }> {
   const record: RsvpRecord = {
     ...input,
     id:
@@ -76,15 +78,14 @@ export function save(input: RsvpInput): RsvpRecord {
   const all = readAll();
   all.push(record);
   writeAll(all);
-  void pushRemote(record);
 
-  return record;
+  return { record, remoteSynced: await pushRemote(record) };
 }
 
-async function pushRemote(record: RsvpRecord) {
+async function pushRemote(record: RsvpRecord): Promise<boolean> {
   if (!isSupabaseConfigured) {
     console.warn('Supabase is not configured; RSVP was saved locally only.', record.reference);
-    return;
+    return false;
   }
 
   try {
@@ -101,8 +102,10 @@ async function pushRemote(record: RsvpRecord) {
       note: record.note,
     });
     if (error) throw error;
+    return true;
   } catch (error) {
     console.error('Could not sync RSVP to Supabase.', error);
+    return false;
   }
 }
 

@@ -4,8 +4,9 @@ import FloralCorner from './art/FloralCorner';
 import { story } from '../config/site';
 import { photos } from '../config/photos';
 
-/** Chapter II — placeholder narrative the couple can rewrite in site.ts. */
 export default function Story() {
+  const storyPhoto = photos.story[3];
+
   return (
     <section
       id="story"
@@ -29,73 +30,52 @@ export default function Story() {
       <div className="relative">
         <SectionHeading
           chapter={story.chapter}
-          eyebrow="How we got here"
+          eyebrow="A little about us"
           title={story.title}
           intro={story.intro}
           tone="dark"
         />
 
-        <ol className="mx-auto mt-16 max-w-5xl">
-          {story.milestones.map((milestone, index) => {
-            const photo = photos.story[index % photos.story.length];
-            const photoLeft = index % 2 === 1;
+        <div className="mx-auto mt-14 grid max-w-4xl items-center gap-10 md:grid-cols-[minmax(0,1.1fr)_minmax(15rem,0.75fr)] md:gap-16">
+          <AnimatedContent direction="left" className="text-center md:text-left">
+            <blockquote className="border-y border-gold/25 py-8 md:py-10">
+              <p className="font-script text-[clamp(2rem,5vw,3.4rem)] leading-[1.08] text-gold-light">
+                “{story.quote}”
+              </p>
+              <footer className="mt-6 flex items-center justify-center gap-3 font-ui text-[0.62rem] uppercase tracking-[0.28em] text-cream/60 md:justify-start">
+                <span className="h-px w-8 bg-gold/50" aria-hidden="true" />
+                {story.attribution}
+              </footer>
+            </blockquote>
 
-            return (
-              <li
-                key={milestone.year}
-                className="border-t border-gold/15 py-10 first:border-t-0 first:pt-0 md:grid md:grid-cols-2 md:items-center md:gap-16 md:py-14"
-              >
-                <AnimatedContent
-                  direction={index % 2 === 0 ? 'left' : 'right'}
-                  distance={40}
-                  delay={index * 90}
-                  className={`${photoLeft ? 'md:order-2' : 'md:order-1'} ${
-                    photoLeft ? 'md:text-left' : 'md:text-right'
-                  }`}
-                >
-                  <p className="chapter-numeral text-2xl text-gold-light">{milestone.year}</p>
-                  <h3 className="mt-2 font-serif text-[1.5rem] leading-snug text-cream">
-                    {milestone.title}
-                  </h3>
-                  <p className="mt-3 text-[1.02rem] leading-relaxed text-cream/75">
-                    {milestone.detail}
-                  </p>
-                </AnimatedContent>
+            <ol className="mt-8 grid gap-4 sm:grid-cols-3">
+              {story.milestones.map((milestone) => (
+                <li key={`${milestone.year}-${milestone.title}`} className="border-l border-gold/40 pl-4">
+                  <p className="chapter-numeral text-xl text-gold-light">{milestone.year}</p>
+                  <p className="mt-1 font-serif text-lg text-cream">{milestone.title}</p>
+                </li>
+              ))}
+            </ol>
+          </AnimatedContent>
 
-                {photo ? (
-                  <AnimatedContent
-                    direction={photoLeft ? 'left' : 'right'}
-                    distance={40}
-                    delay={index * 90 + 80}
-                    className={`${photoLeft ? 'md:order-1' : 'md:order-2'} mt-8 md:mt-0`}
-                  >
-                    <figure className="relative w-full max-w-[21rem] md:mx-auto">
-                      <div className="relative overflow-hidden bg-cream/5 p-2 shadow-[0_28px_60px_-34px_rgba(0,0,0,0.85)] ring-1 ring-gold/40">
-                        <img
-                          src={photo.src}
-                          alt={photo.alt}
-                          loading="lazy"
-                          decoding="async"
-                          className="aspect-[4/5] w-full object-cover"
-                        />
-                      </div>
-                      <figcaption className="mt-3 flex items-center gap-3 font-ui text-[0.6rem] uppercase tracking-[0.28em] text-gold-light/75">
-                        <span className="h-px w-6 bg-gold/50" aria-hidden="true" />
-                        {photo.label}
-                      </figcaption>
-                    </figure>
-                  </AnimatedContent>
-                ) : null}
-              </li>
-            );
-          })}
-        </ol>
-
-        <AnimatedContent className="mx-auto mt-16 max-w-xl text-center">
-          <p className="font-script text-[clamp(1.5rem,4vw,2.1rem)] leading-snug text-gold-light">
-            {story.outro}
-          </p>
-        </AnimatedContent>
+          <AnimatedContent direction="right" delay={120}>
+            <figure className="mx-auto max-w-[18rem]">
+              <div className="overflow-hidden bg-cream/5 p-2 shadow-[0_28px_60px_-34px_rgba(0,0,0,0.85)] ring-1 ring-gold/40">
+                <img
+                  src={storyPhoto.src}
+                  alt={storyPhoto.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-[4/5] w-full object-cover"
+                />
+              </div>
+              <figcaption className="mt-3 flex items-center justify-center gap-3 font-ui text-[0.6rem] uppercase tracking-[0.28em] text-gold-light/75">
+                <span className="h-px w-6 bg-gold/50" aria-hidden="true" />
+                {storyPhoto.label}
+              </figcaption>
+            </figure>
+          </AnimatedContent>
+        </div>
       </div>
     </section>
   );

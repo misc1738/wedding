@@ -27,6 +27,24 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
       } else if (event.key === 'ArrowLeft') {
         event.preventDefault();
         onNavigate((index - 1 + items.length) % items.length);
+      } else if (event.key === 'Tab') {
+        const focusable = Array.from(
+          dialogRef.current?.querySelectorAll<HTMLElement>(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+          ) ?? [],
+        ).filter((element) => !element.hasAttribute('disabled'));
+
+        if (focusable.length === 0) return;
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
 
@@ -44,10 +62,12 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
 
   return (
     <div
+      ref={dialogRef}
       className="fixed inset-0 z-[60] flex flex-col bg-field-deep/97 p-4 backdrop-blur-sm md:p-8"
       role="dialog"
       aria-modal="true"
       aria-label={`${item.label} — photo ${index + 1} of ${items.length}`}
+      tabIndex={-1}
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -74,8 +94,6 @@ export default function Lightbox({ items, index, onClose, onNavigate }: Props) {
       </div>
 
       <div
-        ref={dialogRef}
-        tabIndex={-1}
         className="flex min-h-0 flex-1 items-center justify-center py-5 outline-none"
       >
         {item.src ? (

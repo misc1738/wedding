@@ -4,7 +4,7 @@ import SectionHeading from './SectionHeading';
 import { downloadIcs, type CalendarEvent } from '../lib/ics';
 import { couple, event, schedule } from '../config/site';
 
-const CEREMONY_DATE = '2026-11-26';
+const CEREMONY_DATE = event.startsAt.slice(0, 10);
 const HOUR_MS = 60 * 60 * 1000;
 
 function buildEvents(): CalendarEvent[] {
@@ -32,7 +32,7 @@ export default function Schedule() {
         chapter="I"
         eyebrow="The day"
         title="Schedule"
-        intro="Thursday 26 November 2026. The service starts at ten and does not wait — everything after that is a little more relaxed."
+        intro={`${event.dateLong}. The service starts at ten and does not wait — everything after that is a little more relaxed.`}
       />
 
       <div className="mx-auto mt-14 max-w-3xl">

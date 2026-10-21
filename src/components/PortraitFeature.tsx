@@ -1,6 +1,6 @@
 import AnimatedContent from './bits/AnimatedContent';
 import FloralCorner from './art/FloralCorner';
-import { couple } from '../config/site';
+import { couple, story } from '../config/site';
 import { photos } from '../config/photos';
 
 /**
@@ -77,9 +77,7 @@ export default function PortraitFeature() {
           <div className="mt-6 h-px w-20 bg-gold/55" aria-hidden="true" />
 
           <p className="mt-6 max-w-lg text-[1.05rem] leading-relaxed text-cream/78">
-            Seven years of small things — the drive home the long way, the inside jokes nobody else
-            finds funny, the Sunday afternoons that never made it to a camera roll. These are the
-            few frames we did manage to keep, and the ones we want you to see before the day itself.
+            {story.intro} {story.quote}
           </p>
 
           <p className="mt-4 max-w-lg text-[1.05rem] leading-relaxed text-cream/60">
@@ -87,12 +85,8 @@ export default function PortraitFeature() {
           </p>
 
           <dl className="mt-9 grid grid-cols-3 gap-4 border-t border-gold/25 pt-6">
-            {[
-              ['2019', 'We met'],
-              ['2024', 'She said yes'],
-              ['2026', 'The wedding'],
-            ].map(([year, note]) => (
-              <div key={year}>
+            {story.milestones.map(({ year, title: note }) => (
+              <div key={`${year}-${note}`}>
                 <dt className="font-serif text-[clamp(1.35rem,3vw,1.75rem)] italic text-gold-light">
                   {year}
                 </dt>

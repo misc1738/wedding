@@ -54,7 +54,10 @@ function toItem(photo: Photo): GalleryItem {
 
 /** Curated photos first, then anything else dropped in the folder. */
 function galleryItems(): GalleryItem[] {
-  const curated = photos.gallery.map(toItem);
+  const availableSources = new Set(Object.values(PHOTO_MODULES));
+  const curated = photos.gallery
+    .filter((photo) => availableSources.has(photo.src))
+    .map(toItem);
   const known = new Set(photos.gallery.map((photo) => photo.src));
 
   const extras = Object.entries(PHOTO_MODULES)
@@ -182,10 +185,10 @@ export default function Gallery() {
                 )}
 
                 <span
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-field-deep/70 via-field-deep/0 to-field-deep/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-field-deep/70 via-field-deep/0 to-field-deep/0 opacity-100 transition-opacity duration-500 sm:opacity-0 sm:group-focus-visible:opacity-100 sm:group-hover:opacity-100"
                   aria-hidden="true"
                 />
-                <span className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 p-4 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-0 p-4 opacity-100 transition-all duration-500 sm:translate-y-2 sm:opacity-0 sm:group-focus-visible:translate-y-0 sm:group-focus-visible:opacity-100 sm:group-hover:translate-y-0 sm:group-hover:opacity-100">
                   <span className="font-script text-xl text-cream">{item.label}</span>
                 </span>
               </button>

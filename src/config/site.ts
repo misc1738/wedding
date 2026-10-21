@@ -84,35 +84,15 @@ export const story = {
   chapter: 'II',
   title: 'Our Story',
   intro:
-    'Every love story is beautiful, but ours is our favourite. Here is the short version — the long version takes all evening and at least two plates of food.',
+    'Two years of the small things: taking the long way home, the inside jokes only we understand, and the countless random dates.',
+  quote:
+    'These are the few frames we did manage to keep, and the ones we want you to see as we count down to the day itself.',
+  attribution: 'Mutua & Wahito',
   milestones: [
-    {
-      year: '2019',
-      title: 'The introduction',
-      detail:
-        'A mutual friend insisted we would get along. We did not believe her for about a month.',
-    },
-    {
-      year: '2021',
-      title: 'The long drives',
-      detail:
-        'Late-night drives across Nairobi with the radio on and no particular destination became a habit neither of us wanted to break.',
-    },
-    {
-      year: '2024',
-      title: 'The question',
-      detail:
-        'Asked quietly, answered loudly. Both families were told within the hour.',
-    },
-    {
-      year: '2026',
-      title: 'The beginning',
-      detail:
-        'PCEA St Luke, 10:00 in the morning, surrounded by the people who got us here.',
-    },
+    { year: '2024', title: 'We met' },
+    { year: '2026', title: 'She said yes' },
+    { year: '2026', title: 'The wedding' },
   ],
-  outro:
-    'This is only the first chapter. We are so glad you will be there to turn the page with us.',
 };
 
 export const palette = {

@@ -39,7 +39,7 @@ export const photos = {
     orientation: 'square',
   } as Photo,
 
-  /** One photo per milestone in "Our Story", in the same order. */
+  /** Photos available to the story section and other editorial moments. */
   story: [
     {
       src: `${G}/in-our-element.webp`,

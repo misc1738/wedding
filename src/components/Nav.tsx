@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { couple, nav } from '../config/site';
 
 /**
@@ -9,6 +9,7 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string>('');
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 90);
@@ -44,6 +45,21 @@ export default function Nav() {
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [open]);
+
   return (
     <>
       <header
@@ -51,7 +67,7 @@ export default function Nav() {
         style={{
           backgroundColor: scrolled ? 'rgba(72,81,63,0.94)' : 'transparent',
           backdropFilter: scrolled ? 'blur(10px)' : 'none',
-          transform: scrolled ? 'translateY(0)' : 'translateY(-100%)',
+          transform: 'translateY(0)',
           boxShadow: scrolled ? '0 1px 0 rgba(198,164,92,0.32)' : 'none',
         }}
       >
@@ -100,6 +116,7 @@ export default function Nav() {
 
           <button
             type="button"
+            ref={menuButtonRef}
             className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
             aria-expanded={open}
             aria-label={open ? 'Close menu' : 'Open menu'}
@@ -128,6 +145,8 @@ export default function Nav() {
           opacity: open ? 1 : 0,
           pointerEvents: open ? 'auto' : 'none',
         }}
+        aria-hidden={!open}
+        inert={!open}
       >
         <ul className="flex flex-col items-center gap-5">
           {nav.map((item, index) => (

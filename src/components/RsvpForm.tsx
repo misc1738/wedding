@@ -1,9 +1,10 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import AnimatedContent from './bits/AnimatedContent';
 import SectionHeading from './SectionHeading';
 import FloralCorner from './art/FloralCorner';
+import { isSupabaseConfigured } from '../lib/supabase';
 import { save, type RsvpRecord } from '../lib/rsvpStore';
-import { rsvp } from '../config/site';
+import { event, rsvp } from '../config/site';
 
 type Draft = {
   name: string;
@@ -72,6 +73,13 @@ export default function RsvpForm() {
   const [draft, setDraft] = useState<Draft>(EMPTY);
   const [errors, setErrors] = useState<Errors>({});
   const [record, setRecord] = useState<RsvpRecord | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [syncWarning, setSyncWarning] = useState(false);
+  const confirmationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (record) confirmationRef.current?.focus();
+  }, [record]);
 
   const update = <K extends keyof Draft>(key: K, value: Draft[K]) => {
     setDraft((prev) => ({ ...prev, [key]: value }));
@@ -83,8 +91,10 @@ export default function RsvpForm() {
     });
   };
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = async (formEvent: FormEvent<HTMLFormElement>) => {
+    formEvent.preventDefault();
+
+    if (submitting) return;
 
     const found = validate(draft);
     setErrors(found);
@@ -94,8 +104,10 @@ export default function RsvpForm() {
       return;
     }
 
-    setRecord(
-      save({
+    setSubmitting(true);
+    setSyncWarning(false);
+
+    const result = await save({
         name: draft.name.trim(),
         contact: draft.contact.trim(),
         attending: draft.attending as 'yes' | 'no',
@@ -103,14 +115,18 @@ export default function RsvpForm() {
         meal: draft.attending === 'yes' ? draft.meal : '',
         song: draft.song.trim(),
         note: draft.note.trim(),
-      }),
-    );
+      });
+
+    setRecord(result.record);
+    setSyncWarning(isSupabaseConfigured && !result.remoteSynced);
+    setSubmitting(false);
   };
 
   const reset = () => {
     setRecord(null);
     setDraft(EMPTY);
     setErrors({});
+    setSyncWarning(false);
   };
 
   const attending = draft.attending === 'yes';
@@ -146,7 +162,12 @@ export default function RsvpForm() {
         <div className="mx-auto mt-14 max-w-2xl">
           {record ? (
             <AnimatedContent>
-              <div className="border border-gold/50 bg-field-deep/60 px-6 py-10 text-center backdrop-blur-sm md:px-10">
+              <div
+                ref={confirmationRef}
+                tabIndex={-1}
+                role="status"
+                className="border border-gold/50 bg-field-deep/60 px-6 py-10 text-center outline-none backdrop-blur-sm md:px-10"
+              >
                 <p className="eyebrow text-gold-light">
                   {record.attending === 'yes' ? 'We cannot wait' : 'We will miss you'}
                 </p>
@@ -161,9 +182,16 @@ export default function RsvpForm() {
 
                 <p className="text-[1.02rem] leading-relaxed text-cream/75">
                   {record.attending === 'yes'
-                    ? `A seat is saved for you${record.guests > 1 ? ` and ${record.guests - 1} other${record.guests > 2 ? 's' : ''}` : ''} on ${'26 November 2026'}.`
+                    ? `A seat is saved for you${record.guests > 1 ? ` and ${record.guests - 1} other${record.guests > 2 ? 's' : ''}` : ''} on ${event.dateLong}.`
                     : 'We are sorry to miss you, and grateful you told us.'}
                 </p>
+
+                {syncWarning ? (
+                  <p className="mx-auto mt-5 max-w-md border border-blush-deep/50 bg-blush/10 px-4 py-3 text-sm leading-relaxed text-cream/80">
+                    We saved a copy on this device, but could not sync it online. Please send us your
+                    reference code so we can confirm your reply.
+                  </p>
+                ) : null}
 
                 <div className="mt-7 inline-block border border-gold/50 px-6 py-4">
                   <p className="eyebrow text-gold-light/70">Your reference</p>
@@ -347,12 +375,17 @@ export default function RsvpForm() {
                 </div>
 
                 <div className="mt-8 flex flex-col items-center gap-4">
-                  <button type="submit" className="btn-gold btn-gold--solid px-10">
-                    Send response
+                  <button
+                    type="submit"
+                    className="btn-gold btn-gold--solid px-10 disabled:cursor-wait disabled:opacity-60"
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Saving response…' : 'Send response'}
                   </button>
                   <p className="text-center text-xs italic text-cream/50">
-                    Your reply is saved securely. Quote the reference if you need to
-                    change it.
+                    {isSupabaseConfigured
+                      ? 'Your reply is sent securely. Quote the reference if you need to change it.'
+                      : 'Online RSVP sync is not configured, so this reply is saved on this device only.'}
                   </p>
                 </div>
               </form>
