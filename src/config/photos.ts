@@ -33,9 +33,9 @@ export const photos = {
 
   /** Small square photo tucked into the feature band. */
   featureDetail: {
-    src: `${G}/the-laugh.webp`,
-    label: 'That laugh',
-    alt: 'Wahito laughing, head tipped back, beside Mutua',
+    src: `${G}/close-up.webp`,
+    label: 'Us, close and smiling',
+    alt: 'A close-up selfie of Mutua and Wahito smiling together',
     orientation: 'square',
   } as Photo,
 
@@ -54,20 +54,20 @@ export const photos = {
       orientation: 'portrait',
     },
     {
-      src: `${G}/she-said-yes.webp`,
+      src: `${G}/the-announcement.webp`,
       label: 'The question',
-      alt: 'Wahito in a pink sequin gown beside Mutua at their engagement shoot',
+      alt: 'Mutua and Wahito laughing together in front of an orange backdrop',
       orientation: 'portrait',
     },
     {
-      src: `${G}/welcome-to-our-beginning.webp`,
+      src: `${G}/hand-in-hand.webp`,
       label: 'The beginning',
-      alt: 'Mutua and Wahito embracing beneath a welcome sign',
+      alt: 'Mutua and Wahito shoulder to shoulder in matching Ankara outfits',
       orientation: 'portrait',
     },
   ] as Photo[],
 
-  /** Gallery order is deliberate — heights alternate so the masonry column breathes. */
+  /** Gallery order is deliberate — the mix rotates through different moods so the same image doesn't dominate. */
   gallery: [
     {
       src: `${G}/garden-portrait.webp`,
@@ -82,22 +82,10 @@ export const photos = {
       orientation: 'square',
     },
     {
-      src: `${G}/she-said-yes.webp`,
-      label: 'She said yes',
-      alt: 'Wahito in a pink sequin gown beside Mutua at their engagement shoot',
-      orientation: 'portrait',
-    },
-    {
       src: `${G}/the-announcement.webp`,
       label: 'He asked',
       alt: 'Mutua and Wahito laughing together in front of an orange backdrop',
       orientation: 'landscape',
-    },
-    {
-      src: `${G}/hand-in-hand.webp`,
-      label: 'Hand in hand',
-      alt: 'The couple shoulder to shoulder in matching Ankara outfits',
-      orientation: 'square',
     },
     {
       src: `${G}/welcome-to-our-beginning.webp`,
@@ -106,9 +94,9 @@ export const photos = {
       orientation: 'portrait',
     },
     {
-      src: `${G}/the-laugh.webp`,
-      label: 'That laugh',
-      alt: 'Wahito laughing, head tipped back, beside Mutua',
+      src: `${G}/hand-in-hand.webp`,
+      label: 'Hand in hand',
+      alt: 'The couple shoulder to shoulder in matching Ankara outfits',
       orientation: 'square',
     },
     {
@@ -128,6 +116,18 @@ export const photos = {
       label: 'Up close',
       alt: 'A close selfie of Mutua and Wahito smiling',
       orientation: 'square',
+    },
+    {
+      src: `${G}/the-laugh.webp`,
+      label: 'That laugh',
+      alt: 'Wahito laughing, head tipped back, beside Mutua',
+      orientation: 'square',
+    },
+    {
+      src: `${G}/she-said-yes.webp`,
+      label: 'She said yes',
+      alt: 'Wahito in a pink sequin gown beside Mutua at their engagement shoot',
+      orientation: 'portrait',
     },
   ] as Photo[],
 };
