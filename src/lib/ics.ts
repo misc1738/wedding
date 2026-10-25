@@ -6,7 +6,7 @@ export type CalendarEvent = {
   description?: string;
 };
 
-/** 2026-11-26T10:00:00+03:00 -> 20261126T070000Z */
+/** 2026-11-26T09:00:00+03:00 -> 20261126T060000Z */
 function toIcsDate(iso: string): string {
   return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }

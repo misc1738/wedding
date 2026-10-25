@@ -6,6 +6,7 @@ import { photos } from '../config/photos';
 
 export default function Story() {
   const storyPhoto = photos.story[3];
+  const longDrivesPhoto = photos.story[1];
 
   return (
     <section
@@ -76,6 +77,34 @@ export default function Story() {
             </figure>
           </AnimatedContent>
         </div>
+
+        <AnimatedContent direction="up" delay={180} className="mx-auto mt-16 max-w-4xl">
+          <div className="border-t border-gold/25 pt-10 text-center">
+            <p className="eyebrow text-gold-light/80">One of our favourite chapters</p>
+            <h3 className="mt-3 font-script text-[clamp(2rem,5vw,3.2rem)] text-cream">
+              The long drives
+            </h3>
+            <p className="mx-auto mt-3 max-w-xl text-[1.02rem] leading-relaxed text-cream/75">
+              Taking the long way home became one of the small things that made ordinary days feel
+              like ours.
+            </p>
+            <figure className="mx-auto mt-8 max-w-2xl">
+              <div className="overflow-hidden bg-cream/5 p-2 shadow-[0_28px_60px_-34px_rgba(0,0,0,0.85)] ring-1 ring-gold/40">
+                <img
+                  src={longDrivesPhoto.src}
+                  alt={longDrivesPhoto.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="aspect-[4/3] w-full object-cover"
+                />
+              </div>
+              <figcaption className="mt-3 flex items-center justify-center gap-3 font-ui text-[0.6rem] uppercase tracking-[0.28em] text-gold-light/75">
+                <span className="h-px w-6 bg-gold/50" aria-hidden="true" />
+                {longDrivesPhoto.label}
+              </figcaption>
+            </figure>
+          </div>
+        </AnimatedContent>
       </div>
     </section>
   );

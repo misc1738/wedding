@@ -55,7 +55,7 @@ export default function Invitation() {
                     <dl className="space-y-4">
                       {[
                         ['When', event.dateLong],
-                        ['Time', `${event.timeLabel} · guests seated by 09:50`],
+                        ['Time', `${event.timeLabel} · guests seated by ${event.guestSeatedLabel}`],
                         ['Where', event.venue],
                         ['Area', event.area],
                       ].map(([term, value]) => (
@@ -80,7 +80,7 @@ export default function Invitation() {
           <dl className="divide-y divide-gold/25 border-y border-gold/35">
             {[
               ['When', event.dateLong],
-              ['Time', `${event.timeLabel} · guests seated by 09:50`],
+              ['Time', `${event.timeLabel} · guests seated by ${event.guestSeatedLabel}`],
               ['Where', event.venue],
               ['Area', event.area],
               ['Countdown', event.dateLabel],

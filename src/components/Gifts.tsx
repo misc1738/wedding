@@ -55,11 +55,6 @@ export default function Gifts() {
           ))}
         </div>
 
-        <AnimatedContent delay={280} className="mx-auto mt-10 max-w-xl text-center">
-          <p className="text-[1.02rem] italic leading-relaxed text-gold-light/85">
-            {gifts.note}
-          </p>
-        </AnimatedContent>
       </div>
     </section>
   );

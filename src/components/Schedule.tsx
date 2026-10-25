@@ -32,7 +32,7 @@ export default function Schedule() {
         chapter="I"
         eyebrow="The day"
         title="Schedule"
-        intro={`${event.dateLong}. The service starts at ten and does not wait — everything after that is a little more relaxed.`}
+        intro={`${event.dateLong}. Guests should be seated by ${event.guestSeatedLabel}; the service starts at ${event.timeLabel} and does not wait — everything after that is a little more relaxed.`}
       />
 
       <div className="mx-auto mt-14 max-w-3xl">

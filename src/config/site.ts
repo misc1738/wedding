@@ -17,14 +17,16 @@ export const couple = {
 
 /**
  * The ceremony start moment, used for the countdown and the calendar file.
- * Nairobi is EAT = UTC+03:00, so this is 10:00 local.
+ * Nairobi is EAT = UTC+03:00, so this is 09:00 local.
  */
 export const event = {
-  startsAt: '2026-11-26T10:00:00+03:00',
+  startsAt: '2026-11-26T09:00:00+03:00',
   /** Shown everywhere as the big date. */
   dateLabel: '26 | 11 | 26',
   dateLong: 'Thursday, 26 November 2026',
-  timeLabel: '10:00 AM',
+  timeLabel: '9:00 AM',
+  guestArrivalLabel: '8:45 AM',
+  guestSeatedLabel: '8:50 AM',
   venue: 'PCEA St Luke',
   area: 'Utawala, Nairobi',
   country: 'Kenya',
@@ -44,12 +46,12 @@ export const nav = [
 
 export const schedule = [
   {
-    time: '09:30',
+    time: '08:45',
     title: 'Guests arrive',
-    detail: 'Ushers will show you to your seat. Come a little early — the church fills quickly.',
+    detail: `Ushers will show you to your seat. Please be seated by ${event.guestSeatedLabel} so the ceremony can begin on time.`,
   },
   {
-    time: '10:00',
+    time: '09:00',
     title: 'Holy matrimony',
     detail: 'The service begins promptly. Please be seated before the bridal party enters.',
   },
@@ -66,7 +68,7 @@ export const schedule = [
   {
     time: '14:00',
     title: 'Reception',
-    detail: 'Lunch is served. Seating follows the printed cards at the entrance.',
+    detail: 'Lunch is served and the celebrations continue.',
   },
   {
     time: '17:00',
@@ -114,7 +116,7 @@ export const travel = {
   chapter: 'V',
   title: 'Travel & the venue',
   intro:
-    'PCEA St Luke sits in Utawala, about a twenty-minute drive from Nairobi’s CBD depending on traffic.',
+    'PCEA St Luke sits in Utawala, about a 35-minute drive from Nairobi’s CBD depending on traffic.',
   /** Centred on Utawala; OpenStreetMap does not carry this church as a named place. */
   map: {
     lat: -1.2843808,
@@ -129,23 +131,13 @@ export const travel = {
     {
       heading: 'Getting there',
       detail:
-        'From town, take the Eastleigh–Utawala route or any matatu heading toward Utawala and alight at the Utawala stage. A boda or short taxi hop takes you the rest of the way.',
+        'Take matatu number 33 from Ambassador and alight at Quickmart (Kwa Chief).',
     },
     {
       heading: 'Parking',
       detail:
-        'There is parking inside the church compound. Arrive by 09:15 on the day — the gate fills once the bridal party arrives.',
-    },
-    {
-      heading: 'Where to stay',
-      detail:
-        'Hotels along Mombasa Road and in the Utawala–Embakasi stretch are all within a short drive. Book early; the wedding falls on a weekday.',
-    },
-    {
-      heading: 'Running late?',
-      detail:
-        'Message the couple directly rather than waiting. The service starts at 10:00 sharp and the doors close for the processional.',
-    },
+        `There is parking inside the church compound. Please arrive by ${event.guestArrivalLabel}.`,
+      },
   ],
 };
 
@@ -153,15 +145,14 @@ export const gifts = {
   chapter: 'VI',
   title: 'Gifts',
   intro:
-    'Your presence is the gift we want. If you would still like to give, a contribution towards our first home would mean a great deal to us.',
+    'We will deeply appreciate your presence and thoughtful gifts. A contribution towards our first home together would mean a great deal to us.',
   options: [
     {
-      label: 'Cash envelope',
+      label: 'Cash',
       value: 'On the day',
-      detail: 'There will be a card box at the reception entrance, or hand it to either family.',
+      detail: 'Envelopes shall be provided at the reception.',
     },
   ],
-  note: 'Please do not feel obliged. We would rather have you there on time than have anything at all.',
 };
 
 export const faq = {
@@ -170,12 +161,12 @@ export const faq = {
   intro: 'The things guests ask us most, answered in advance.',
   items: [
     {
-      q: 'Can I bring a plus-one?',
+      q: 'Bringing a plus-one?',
       a: 'Your invitation names everyone we have saved a seat for. If someone is missing from it, message us and we will do our best.',
     },
     {
       q: 'What time should I arrive?',
-      a: 'Doors open at 09:30 and the service begins at 10:00. Please be seated by 09:50 so the processional can start on time.',
+      a: `Please arrive by ${event.guestArrivalLabel}. The service begins at ${event.timeLabel}, and everyone should be seated by ${event.guestSeatedLabel} so the processional can start on time.`,
     },
     {
       q: 'Are children welcome?',
@@ -183,15 +174,11 @@ export const faq = {
     },
     {
       q: 'Is there parking?',
-      a: 'Yes, inside the church compound. Come by 09:15; the gate gets busy once the bridal party arrives.',
+      a: `Yes, inside the church compound. Please arrive by ${event.guestArrivalLabel}; the gate gets busy once the bridal party arrives.`,
     },
     {
       q: 'What should I wear?',
       a: 'Anything in blush, dusty rose, mauve, plum or sage. Smart and comfortable is the aim — the reception involves dancing.',
-    },
-    {
-      q: 'Will the ceremony be photographed?',
-      a: 'We have photographers covered, so keep your phone down for the vows. There will be plenty of time for your own pictures afterwards.',
     },
   ],
 };
