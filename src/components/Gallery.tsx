@@ -52,11 +52,22 @@ function toItem(photo: Photo): GalleryItem {
   };
 }
 
-/** Curated photos first, then anything else dropped in the folder. */
+/**
+ * Curated gallery photos first, then anything else dropped in the folder.
+ * Images already used in the feature or story sections stay out of the
+ * gallery, so the same frame is not presented repeatedly across the page.
+ */
 function galleryItems(): GalleryItem[] {
   const availableSources = new Set(Object.values(PHOTO_MODULES));
+  const editorialSources = new Set([
+    photos.feature.src,
+    photos.featureDetail.src,
+    ...photos.story.map((photo) => photo.src),
+  ]);
   const curated = photos.gallery
-    .filter((photo) => availableSources.has(photo.src))
+    .filter(
+      (photo) => availableSources.has(photo.src) && !editorialSources.has(photo.src),
+    )
     .map(toItem);
   const known = new Set(photos.gallery.map((photo) => photo.src));
 

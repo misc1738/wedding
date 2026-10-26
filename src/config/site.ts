@@ -12,7 +12,7 @@ export const couple = {
   display: 'Mutua & Wahito',
   greeting: 'Welcome to our beginning',
   /** Short line under the names in the hero. */
-  tagline: 'Together with their families, we invite you to celebrate our marriage',
+  tagline: 'Together with their families, they invite you to share in the joy of their wedding day.',
 };
 
 /**
@@ -35,6 +35,7 @@ export const event = {
 };
 
 export const nav = [
+  { id: 'invitation', label: 'Invitation' },
   { id: 'schedule', label: 'Schedule' },
   { id: 'story', label: 'Our Story' },
   { id: 'gallery', label: 'Gallery' },

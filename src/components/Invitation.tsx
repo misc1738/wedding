@@ -7,7 +7,7 @@ import { couple, event } from '../config/site';
 /** The invitation itself, shown as a tactile card alongside the structured details. */
 export default function Invitation() {
   return (
-    <section className="section-pad relative overflow-hidden bg-cream">
+    <section id="invitation" className="section-pad relative overflow-hidden bg-cream scroll-mt-20">
       <FloralCorner
         flip
         className="pointer-events-none absolute -right-8 top-6 h-44 w-44 opacity-25"
@@ -16,7 +16,7 @@ export default function Invitation() {
       <SectionHeading
         eyebrow="The invitation"
         title="Together with their families"
-        intro={`${couple.partnerA} and ${couple.partnerB} would be honoured by your company on their wedding day.`}
+        intro={`${couple.partnerA} and ${couple.partnerB} would be honoured by your company as they exchange their vows and begin this new chapter together.`}
       />
 
       <div className="mx-auto mt-14 grid max-w-5xl items-center gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-16">

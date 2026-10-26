@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { couple, nav } from '../config/site';
 
 /**
- * Sticky navigation. Transparent over the hero, then fades in past the fold
- * (the awwwards-style transition) with the active chapter highlighted.
+ * Sticky navigation. It stays quiet and transparent over the hero, then gains
+ * a soft sage backdrop after the first scroll with the active section highlighted.
  */
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
