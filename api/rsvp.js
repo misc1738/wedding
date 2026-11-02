@@ -32,22 +32,6 @@ function isValidRsvp(value) {
 }
 
 export default async function handler(request, response) {
-  if (request.method === 'DELETE' && request.query?.reference === 'MW-FIXCHK3') {
-    if (!supabaseUrl || supabaseKeys.length === 0) {
-      return response.status(503).json({ error: 'RSVP service is not configured.' });
-    }
-
-    for (const key of supabaseKeys) {
-      const supabase = createClient(supabaseUrl, key, {
-        auth: { autoRefreshToken: false, persistSession: false },
-      });
-      const { error } = await supabase.from('rsvps').delete().eq('reference', 'MW-FIXCHK3');
-      if (!error) return response.status(204).end();
-    }
-
-    return response.status(502).json({ error: 'Could not remove test RSVP.' });
-  }
-
   if (request.method !== 'POST') {
     response.setHeader('Allow', 'POST');
     return response.status(405).json({ error: 'Method not allowed.' });
