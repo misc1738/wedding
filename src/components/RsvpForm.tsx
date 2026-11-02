@@ -125,7 +125,7 @@ export default function RsvpForm() {
       });
 
     setRecord(result.record);
-    setSyncWarning(isSupabaseConfigured && !result.remoteSynced);
+    setSyncWarning(!result.remoteSynced);
     setSubmitting(false);
   };
 
