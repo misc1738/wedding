@@ -10,7 +10,7 @@ type Draft = {
   name: string;
   contact: string;
   guests: string;
-  guestNames: string;
+  guestNames: string[];
   meal: string;
   dietary: string;
   song: string;
@@ -23,7 +23,7 @@ const EMPTY: Draft = {
   name: '',
   contact: '',
   guests: '1',
-  guestNames: '',
+  guestNames: [],
   meal: rsvp.meals[0],
   dietary: '',
   song: '',
@@ -53,8 +53,14 @@ function validate(draft: Draft): Errors {
   if (!Number.isInteger(count) || count < 1 || count > MAX_GUESTS) {
     errors.guests = `Somewhere between 1 and ${MAX_GUESTS}, please.`;
   }
-  if (count > 1 && draft.guestNames.trim().length < 2) {
-    errors.guestNames = 'Please list the names of the other guests.';
+  if (count > 1) {
+    const additionalNames = draft.guestNames.slice(0, count - 1);
+    if (
+      additionalNames.length !== count - 1 ||
+      additionalNames.some((name) => name.trim().length < 2)
+    ) {
+      errors.guestNames = 'Please enter the name of every additional guest.';
+    }
   }
 
   return errors;
@@ -111,7 +117,7 @@ export default function RsvpForm() {
         contact: draft.contact.trim(),
         attending: 'yes',
         guests: Number(draft.guests),
-        guestNames: draft.guestNames.trim(),
+        guestNames: draft.guestNames.map((name) => name.trim()).join(', '),
         meal: draft.meal,
         dietary: draft.dietary.trim(),
         song: draft.song.trim(),
@@ -269,7 +275,15 @@ export default function RsvpForm() {
                           value={draft.guests}
                           aria-invalid={Boolean(errors.guests)}
                           aria-describedby={errors.guests ? 'guests-error' : undefined}
-                          onChange={(e) => update('guests', e.target.value)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const count = Number(value);
+                            update('guests', value);
+                            update(
+                              'guestNames',
+                              draft.guestNames.slice(0, Math.max(0, count - 1)),
+                            );
+                          }}
                         >
                           {Array.from({ length: MAX_GUESTS }, (_, i) => i + 1).map((n) => (
                             <option key={n} value={String(n)}>
@@ -353,20 +367,27 @@ export default function RsvpForm() {
         </div>
         {Number(draft.guests) > 1 ? (
           <div className="sm:col-span-2">
-            <label htmlFor="guestNames" className="eyebrow block text-gold-light">
-              Names of other guests
-            </label>
-            <input
-              id="guestNames"
-              name="guestNames"
-              type="text"
-              className="field-input mt-2"
-              placeholder="Who else is in your party?"
-              value={draft.guestNames}
-              aria-invalid={Boolean(errors.guestNames)}
-              aria-describedby={errors.guestNames ? 'guestNames-error' : undefined}
-              onChange={(e) => update('guestNames', e.target.value)}
-            />
+            <p className="eyebrow text-gold-light">Names of other guests</p>
+            <div className="mt-2 space-y-3">
+              {Array.from({ length: Number(draft.guests) - 1 }, (_, index) => (
+                <input
+                  key={index}
+                  id={`guest-name-${index + 1}`}
+                  name={`guest-name-${index + 1}`}
+                  type="text"
+                  className="field-input"
+                  placeholder={`Guest ${index + 2} full name`}
+                  value={draft.guestNames[index] ?? ''}
+                  aria-invalid={Boolean(errors.guestNames)}
+                  aria-describedby={errors.guestNames ? 'guestNames-error' : undefined}
+                  onChange={(e) => {
+                    const names = [...draft.guestNames];
+                    names[index] = e.target.value;
+                    update('guestNames', names);
+                  }}
+                />
+              ))}
+            </div>
             {fieldError(errors, 'guestNames')}
           </div>
         ) : null}
