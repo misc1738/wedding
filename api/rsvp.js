@@ -51,7 +51,14 @@ export default async function handler(request, response) {
     const supabase = createClient(supabaseUrl, key, {
       auth: { autoRefreshToken: false, persistSession: false },
     });
-    const result = await supabase.from('rsvps').insert(request.body);
+    let result = await supabase.from('rsvps').insert(request.body);
+    if (
+      result.error?.code === 'PGRST204' &&
+      result.error.message.includes("'dietary' column")
+    ) {
+      const { dietary: _dietary, ...legacyPayload } = request.body;
+      result = await supabase.from('rsvps').insert(legacyPayload);
+    }
     if (!result.error) {
       return response.status(201).json({ ok: true });
     }
@@ -65,10 +72,6 @@ export default async function handler(request, response) {
       details: error.details,
       hint: error.hint,
     });
-    return response.status(502).json({
-      error: 'Could not save RSVP.',
-      code: error.code,
-      message: error.message,
-    });
+    return response.status(502).json({ error: 'Could not save RSVP.' });
   }
 }
