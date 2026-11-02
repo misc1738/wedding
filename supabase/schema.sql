@@ -19,13 +19,13 @@ alter table public.rsvps add column if not exists dietary text not null default 
 alter table public.rsvps enable row level security;
 
 grant usage on schema public to anon, authenticated;
-grant insert on table public.rsvps to anon, authenticated;
+grant insert on table public.rsvps to public;
 grant select, delete on table public.rsvps to authenticated;
 
 drop policy if exists "Anyone can submit an RSVP" on public.rsvps;
 create policy "Anyone can submit an RSVP"
   on public.rsvps for insert
-  to anon, authenticated
+  to public
   with check (true);
 
 drop policy if exists "Admins can read RSVPs" on public.rsvps;

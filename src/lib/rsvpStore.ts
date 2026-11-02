@@ -108,9 +108,8 @@ async function pushRemote(record: RsvpRecord): Promise<boolean> {
 
     if (response.ok) return true;
 
-    // Vite does not run Vercel functions locally. A server configuration
-    // failure can also be recovered through Supabase's insert policy.
-    if (![404, 502, 503].includes(response.status) || !isSupabaseConfigured) {
+    // Vite does not run Vercel functions locally; use the public client there.
+    if (response.status !== 404 || !isSupabaseConfigured) {
       console.error('Could not sync RSVP through the server endpoint.', record.reference);
       return false;
     }
