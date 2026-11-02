@@ -65,6 +65,10 @@ export default async function handler(request, response) {
       details: error.details,
       hint: error.hint,
     });
-    return response.status(502).json({ error: 'Could not save RSVP.' });
+    return response.status(502).json({
+      error: 'Could not save RSVP.',
+      code: error.code,
+      message: error.message,
+    });
   }
 }
