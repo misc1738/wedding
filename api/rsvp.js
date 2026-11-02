@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
-const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+const supabaseKeys = [
+  process.env.SUPABASE_SECRET_KEY,
+  process.env.SUPABASE_PUBLISHABLE_KEY,
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+].filter(Boolean);
 
 function isValidRsvp(value) {
   return (
@@ -32,7 +36,7 @@ export default async function handler(request, response) {
     return response.status(405).json({ error: 'Method not allowed.' });
   }
 
-  if (!supabaseUrl || !supabaseSecretKey) {
+  if (!supabaseUrl || supabaseKeys.length === 0) {
     console.error('RSVP endpoint is missing Supabase server configuration.');
     return response.status(503).json({ error: 'RSVP service is not configured.' });
   }
@@ -41,15 +45,25 @@ export default async function handler(request, response) {
     return response.status(400).json({ error: 'Invalid RSVP data.' });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseSecretKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-  const { error } = await supabase.from('rsvps').insert(request.body);
-
-  if (error) {
-    console.error('Could not save RSVP to Supabase.', error);
-    return response.status(502).json({ error: 'Could not save RSVP.' });
+  let error;
+  for (const key of supabaseKeys) {
+    const supabase = createClient(supabaseUrl, key, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const result = await supabase.from('rsvps').insert(request.body);
+    if (!result.error) {
+      return response.status(201).json({ ok: true });
+    }
+    error = result.error;
   }
 
-  return response.status(201).json({ ok: true });
+  if (error) {
+    console.error('Could not save RSVP to Supabase.', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
+    return response.status(502).json({ error: 'Could not save RSVP.' });
+  }
 }
