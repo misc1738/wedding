@@ -1,8 +1,7 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────────
  *  EVERYTHING YOU MIGHT WANT TO EDIT LIVES IN THIS FILE.
- *  Dates, times, venue, wording, FAQ answers, links, the admin passcode hash.
- *  Nothing outside `ADMIN` needs touching to change what the site says.
+ *  Dates, times, venue, wording, FAQ answers, and links.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -197,16 +196,4 @@ export const footer = {
   hashtag: '#MutuaMeetsWahito',
   /** Edit this to your own contact if you would rather hear from guests directly. */
   contactLabel: 'Questions? Message either of us directly.',
-};
-
-export const ADMIN = {
-  /**
-   * SHA-256 of the passcode — the plain text is never in the source.
-   * Change by running:  node -e "console.log(require('crypto').createHash('sha256').update('YOURCODE').digest('hex'))"
-   * Default passcode: 261126
-   */
-  passcodeHash:
-    '348de92d6eec7f3ff2da9fe9074004fefa0a75cb756605accf2ffa1b1418a87a',
-  /** Cosmetic only — this is a deterrent, not real authentication. */
-  hint: 'The passcode is the wedding date, no separators.',
 };

@@ -1,0 +1,55 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
+
+function isValidRsvp(value) {
+  return (
+    value &&
+    typeof value === 'object' &&
+    typeof value.id === 'string' &&
+    typeof value.reference === 'string' &&
+    typeof value.submitted_at === 'string' &&
+    typeof value.name === 'string' &&
+    typeof value.contact === 'string' &&
+    (value.attending === 'yes' || value.attending === 'no') &&
+    Number.isInteger(value.guests) &&
+    value.guests >= 0 &&
+    value.guests <= 6 &&
+    typeof value.guest_names === 'string' &&
+    typeof value.meal === 'string' &&
+    typeof value.dietary === 'string' &&
+    typeof value.song === 'string' &&
+    typeof value.note === 'string' &&
+    value.name.trim().length >= 2 &&
+    value.contact.trim().length > 0
+  );
+}
+
+export default async function handler(request, response) {
+  if (request.method !== 'POST') {
+    response.setHeader('Allow', 'POST');
+    return response.status(405).json({ error: 'Method not allowed.' });
+  }
+
+  if (!supabaseUrl || !supabaseSecretKey) {
+    console.error('RSVP endpoint is missing Supabase server configuration.');
+    return response.status(503).json({ error: 'RSVP service is not configured.' });
+  }
+
+  if (!isValidRsvp(request.body)) {
+    return response.status(400).json({ error: 'Invalid RSVP data.' });
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseSecretKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
+  const { error } = await supabase.from('rsvps').insert(request.body);
+
+  if (error) {
+    console.error('Could not save RSVP to Supabase.', error);
+    return response.status(502).json({ error: 'Could not save RSVP.' });
+  }
+
+  return response.status(201).json({ ok: true });
+}

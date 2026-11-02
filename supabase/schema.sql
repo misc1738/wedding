@@ -6,7 +6,9 @@ create table if not exists public.rsvps (
   contact text not null,
   attending text not null check (attending in ('yes', 'no')),
   guests integer not null default 0 check (guests between 0 and 6),
+  guest_names text not null default '',
   meal text not null default '',
+  dietary text not null default '',
   song text not null default '',
   note text not null default ''
 );

@@ -9,9 +9,10 @@ import { event, rsvp } from '../config/site';
 type Draft = {
   name: string;
   contact: string;
-  attending: 'yes' | 'no' | '';
   guests: string;
+  guestNames: string;
   meal: string;
+  dietary: string;
   song: string;
   note: string;
 };
@@ -21,9 +22,10 @@ type Errors = Partial<Record<keyof Draft, string>>;
 const EMPTY: Draft = {
   name: '',
   contact: '',
-  attending: '',
   guests: '1',
+  guestNames: '',
   meal: rsvp.meals[0],
+  dietary: '',
   song: '',
   note: '',
 };
@@ -47,15 +49,12 @@ function validate(draft: Draft): Errors {
     errors.contact = 'That does not look like an email address or a phone number.';
   }
 
-  if (!draft.attending) {
-    errors.attending = 'Please let us know whether you can make it.';
+  const count = Number(draft.guests);
+  if (!Number.isInteger(count) || count < 1 || count > MAX_GUESTS) {
+    errors.guests = `Somewhere between 1 and ${MAX_GUESTS}, please.`;
   }
-
-  if (draft.attending === 'yes') {
-    const count = Number(draft.guests);
-    if (!Number.isInteger(count) || count < 1 || count > MAX_GUESTS) {
-      errors.guests = `Somewhere between 1 and ${MAX_GUESTS}, please.`;
-    }
+  if (count > 1 && draft.guestNames.trim().length < 2) {
+    errors.guestNames = 'Please list the names of the other guests.';
   }
 
   return errors;
@@ -110,9 +109,11 @@ export default function RsvpForm() {
     const result = await save({
         name: draft.name.trim(),
         contact: draft.contact.trim(),
-        attending: draft.attending as 'yes' | 'no',
-        guests: draft.attending === 'yes' ? Number(draft.guests) : 0,
-        meal: draft.attending === 'yes' ? draft.meal : '',
+        attending: 'yes',
+        guests: Number(draft.guests),
+        guestNames: draft.guestNames.trim(),
+        meal: draft.meal,
+        dietary: draft.dietary.trim(),
         song: draft.song.trim(),
         note: draft.note.trim(),
       });
@@ -128,8 +129,6 @@ export default function RsvpForm() {
     setErrors({});
     setSyncWarning(false);
   };
-
-  const attending = draft.attending === 'yes';
 
   return (
     <section
@@ -257,47 +256,8 @@ export default function RsvpForm() {
                     {fieldError(errors, 'contact')}
                   </div>
 
-                  {/* Attending */}
-                  <fieldset aria-describedby={errors.attending ? 'attending-error' : undefined}>
-                    <legend className="eyebrow text-gold-light">
-                      Will you be there?
-                    </legend>
-                    <div className="mt-3 grid grid-cols-2 gap-3">
-                      {(
-                        [
-                          { value: 'yes', label: 'Joyfully accepts' },
-                          { value: 'no', label: 'Regretfully declines' },
-                        ] as const
-                      ).map((option) => {
-                        const selected = draft.attending === option.value;
-                        return (
-                          <label
-                            key={option.value}
-                            className={`cursor-pointer border px-4 py-3.5 text-center font-serif text-[1.02rem] transition-colors ${
-                              selected
-                                ? 'border-gold bg-gold text-field-deep'
-                                : 'border-gold/45 text-cream hover:border-gold hover:bg-gold/15'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="attending"
-                              value={option.value}
-                              checked={selected}
-                              className="sr-only"
-                              onChange={() => update('attending', option.value)}
-                            />
-                            {option.label}
-                          </label>
-                        );
-                      })}
-                    </div>
-                    {fieldError(errors, 'attending')}
-                  </fieldset>
-
                   {/* Conditional fields */}
-                  {attending ? (
-                    <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="grid gap-6 sm:grid-cols-2">
                       <div>
                         <label htmlFor="guests" className="eyebrow block text-gold-light">
                           In your party
@@ -338,8 +298,7 @@ export default function RsvpForm() {
                           ))}
                         </select>
                       </div>
-                    </div>
-                  ) : null}
+                  </div>
 
                   {/* Song */}
                   <div>
@@ -391,6 +350,39 @@ export default function RsvpForm() {
               </form>
             </AnimatedContent>
           )}
+        </div>
+        {Number(draft.guests) > 1 ? (
+          <div className="sm:col-span-2">
+            <label htmlFor="guestNames" className="eyebrow block text-gold-light">
+              Names of other guests
+            </label>
+            <input
+              id="guestNames"
+              name="guestNames"
+              type="text"
+              className="field-input mt-2"
+              placeholder="Who else is in your party?"
+              value={draft.guestNames}
+              aria-invalid={Boolean(errors.guestNames)}
+              aria-describedby={errors.guestNames ? 'guestNames-error' : undefined}
+              onChange={(e) => update('guestNames', e.target.value)}
+            />
+            {fieldError(errors, 'guestNames')}
+          </div>
+        ) : null}
+        <div className="sm:col-span-2">
+          <label htmlFor="dietary" className="eyebrow block text-gold-light">
+            Dietary needs <span className="normal-case tracking-normal text-cream/45">(optional)</span>
+          </label>
+          <input
+            id="dietary"
+            name="dietary"
+            type="text"
+            className="field-input mt-2"
+            placeholder="Allergies or dietary restrictions"
+            value={draft.dietary}
+            onChange={(e) => update('dietary', e.target.value)}
+          />
         </div>
       </div>
     </section>

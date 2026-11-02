@@ -16,7 +16,9 @@ export type RsvpRecord = {
   contact: string;
   attending: 'yes' | 'no';
   guests: number;
+  guestNames: string;
   meal: string;
+  dietary: string;
   song: string;
   note: string;
 };
@@ -83,13 +85,8 @@ export async function save(
 }
 
 async function pushRemote(record: RsvpRecord): Promise<boolean> {
-  if (!isSupabaseConfigured) {
-    console.warn('Supabase is not configured; RSVP was saved locally only.', record.reference);
-    return false;
-  }
-
   try {
-    const { error } = await supabase.from('rsvps').insert({
+    const payload = {
       id: record.id,
       reference: record.reference,
       submitted_at: record.submittedAt,
@@ -97,10 +94,27 @@ async function pushRemote(record: RsvpRecord): Promise<boolean> {
       contact: record.contact,
       attending: record.attending,
       guests: record.guests,
+      guest_names: record.guestNames,
       meal: record.meal,
+      dietary: record.dietary,
       song: record.song,
       note: record.note,
+    };
+    const response = await fetch('/api/rsvp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
     });
+
+    if (response.ok) return true;
+
+    // Vite does not run Vercel functions locally; use the public client there.
+    if (response.status !== 404 || !isSupabaseConfigured) {
+      console.error('Could not sync RSVP through the server endpoint.', record.reference);
+      return false;
+    }
+
+    const { error } = await supabase.from('rsvps').insert(payload);
     if (error) throw error;
     return true;
   } catch (error) {
@@ -127,7 +141,9 @@ export async function listRemote(): Promise<RsvpRecord[]> {
     contact: record.contact,
     attending: record.attending,
     guests: record.guests,
+    guestNames: record.guest_names ?? '',
     meal: record.meal,
+    dietary: record.dietary ?? '',
     song: record.song,
     note: record.note,
   }));
@@ -189,7 +205,9 @@ const CSV_COLUMNS: { key: keyof RsvpRecord; label: string }[] = [
   { key: 'contact', label: 'Contact' },
   { key: 'attending', label: 'Attending' },
   { key: 'guests', label: 'Guests' },
+  { key: 'guestNames', label: 'Other guests' },
   { key: 'meal', label: 'Meal' },
+  { key: 'dietary', label: 'Dietary needs' },
   { key: 'song', label: 'Song request' },
   { key: 'note', label: 'Note' },
 ];

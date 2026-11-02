@@ -20,6 +20,31 @@ export default function Admin() {
   const [records, setRecords] = useState<RsvpRecord[]>([]);
 
   useEffect(() => {
+    if (!isSupabaseConfigured) return;
+
+    let active = true;
+    void supabase.auth.getSession().then(({ data, error: sessionError }) => {
+      if (!active) return;
+      if (sessionError) {
+        setError(sessionError.message);
+        return;
+      }
+      setUnlocked(Boolean(data.session));
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setUnlocked(Boolean(session));
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
     if (!unlocked) return;
     void listRemote()
       .then(setRecords)
@@ -214,7 +239,7 @@ export default function Admin() {
             <table className="w-full min-w-[52rem] border-collapse text-left text-[0.95rem]">
               <thead>
                 <tr className="border-b border-gold/40 bg-cream-warm/70">
-                  {['Ref', 'Name', 'Contact', 'Attending', 'Party', 'Meal', 'Song', 'Note'].map(
+                  {['Ref', 'Name', 'Contact', 'Attending', 'Party', 'Other guests', 'Meal', 'Dietary', 'Song', 'Note'].map(
                     (head) => (
                       <th key={head} className="eyebrow px-3 py-3 text-gold-deep">
                         {head}
@@ -243,7 +268,9 @@ export default function Admin() {
                       </span>
                     </td>
                     <td className="px-3 py-3 tabular-nums">{record.guests || '—'}</td>
+                    <td className="px-3 py-3">{record.guestNames || '—'}</td>
                     <td className="px-3 py-3">{record.meal || '—'}</td>
+                    <td className="px-3 py-3">{record.dietary || '—'}</td>
                     <td className="px-3 py-3">{record.song || '—'}</td>
                     <td className="max-w-[16rem] px-3 py-3 text-ink/75">{record.note || '—'}</td>
                   </tr>
