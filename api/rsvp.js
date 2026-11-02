@@ -56,7 +56,8 @@ export default async function handler(request, response) {
       result.error?.code === 'PGRST204' &&
       result.error.message.includes("'dietary' column")
     ) {
-      const { dietary: _dietary, ...legacyPayload } = request.body;
+      const { dietary: _dietary, guest_names: _guestNames, ...legacyPayload } =
+        request.body;
       result = await supabase.from('rsvps').insert(legacyPayload);
     }
     if (!result.error) {
