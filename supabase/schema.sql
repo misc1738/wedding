@@ -13,7 +13,14 @@ create table if not exists public.rsvps (
   note text not null default ''
 );
 
+alter table public.rsvps add column if not exists guest_names text not null default '';
+alter table public.rsvps add column if not exists dietary text not null default '';
+
 alter table public.rsvps enable row level security;
+
+grant usage on schema public to anon, authenticated;
+grant insert on table public.rsvps to anon, authenticated;
+grant select, delete on table public.rsvps to authenticated;
 
 drop policy if exists "Anyone can submit an RSVP" on public.rsvps;
 create policy "Anyone can submit an RSVP"
