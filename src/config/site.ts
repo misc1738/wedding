@@ -43,7 +43,7 @@ export const nav = [
   { id: 'gallery', label: 'Gallery' },
   { id: 'colours', label: 'Colours' },
   { id: 'travel', label: 'Travel' },
-  { id: 'gifts', label: 'Gifts' },
+  { id: 'gifts', label: 'Gift' },
   { id: 'faq', label: 'Q&A' },
 ];
 
@@ -146,9 +146,9 @@ export const travel = {
 
 export const gifts = {
   chapter: 'VI',
-  title: 'Gifts',
+  title: 'Gift',
   intro:
-    'We will deeply appreciate your presence and thoughtful gifts. A contribution towards our first home together would mean a great deal to us.',
+    'We will deeply appreciate your presence and thoughtful gift. A contribution towards our first home together would mean a great deal to us.',
   options: [
     {
       label: 'Cash',
