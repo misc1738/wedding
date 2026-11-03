@@ -21,7 +21,7 @@ export default function Travel() {
         <AnimatedContent direction="left" distance={40}>
           <div className="relative overflow-hidden border border-gold/40">
             <iframe
-              title="Map showing Utawala, Nairobi — the area around PCEA St Luke"
+              title="Map showing Nairobi Baptist Westlands"
               src={EMBED_URL}
               className="block h-[19rem] w-full border-0 sm:h-[24rem]"
               loading="lazy"
@@ -29,7 +29,7 @@ export default function Travel() {
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-field-deep/90 px-4 py-3">
               <p className="font-serif text-[1.05rem] text-cream">
-                PCEA St Luke · Utawala, Nairobi
+                Nairobi Baptist Westlands · Westlands, Nairobi
               </p>
             </div>
           </div>
@@ -54,8 +54,7 @@ export default function Travel() {
           </div>
 
           <p className="mt-4 text-sm italic text-ink/55">
-            The map is centred on the ceremony venue. The reception is at{' '}
-            {event.receptionVenue}.
+            Reception venue: {event.receptionVenue}, {event.receptionArea}.
           </p>
         </AnimatedContent>
 

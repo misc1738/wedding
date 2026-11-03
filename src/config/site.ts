@@ -114,27 +114,25 @@ export const travel = {
   chapter: 'V',
   title: 'Travel & the venue',
   intro:
-    'The ceremony is at PCEA St Luke in Utawala, followed by the reception at Nairobi Baptist Westlands.',
-  /** Centred on Utawala; OpenStreetMap does not carry this church as a named place. */
+    'The reception is at Nairobi Baptist Westlands. Use the map or the provided Google Maps link to find us.',
+  /** Centred on Nairobi Baptist Westlands. */
   map: {
-    lat: -1.2843808,
-    lon: 36.9680714,
-    /** Exact lookup — resolves the church name properly. */
-    googleMapsUrl:
-      'https://www.google.com/maps/search/?api=1&query=PCEA%20St%20Luke%2C%20Utawala%2C%20Nairobi%2C%20Kenya',
+    lat: -1.2636,
+    lon: 36.8034,
+    googleMapsUrl: 'https://maps.app.goo.gl/n7GDPPDTDys5rpvR6',
     directionsUrl:
-      'https://www.google.com/maps/dir/?api=1&destination=PCEA%20St%20Luke%2C%20Utawala%2C%20Nairobi%2C%20Kenya',
+      'https://www.google.com/maps/dir/?api=1&destination=Nairobi%20Baptist%20Westlands%2C%20Nairobi%2C%20Kenya',
   },
   blocks: [
     {
       heading: 'Getting there',
       detail:
-        'Take matatu number 33 from Ambassador and alight at Quickmart (Kwa Chief).',
+        'Open the Google Maps link for the exact route to Nairobi Baptist Westlands.',
     },
     {
       heading: 'Parking',
       detail:
-        `There is parking inside the church compound. Please arrive by ${event.guestArrivalLabel}.`,
+        'Please allow extra time to find parking and make your way into the reception venue.',
       },
       {
         heading: 'Reception',
