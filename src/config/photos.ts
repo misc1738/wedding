@@ -129,6 +129,24 @@ export const photos = {
       alt: 'Wahito in a pink sequin gown beside Mutua at their engagement shoot',
       orientation: 'portrait',
     },
+    {
+      src: `${G}/engagement-laugh.png`,
+      label: 'A joyful moment',
+      alt: 'Mutua and Wahito laughing together at their engagement shoot',
+      orientation: 'landscape',
+    },
+    {
+      src: `${G}/engagement-garden.png`,
+      label: 'In the garden',
+      alt: 'Mutua and Wahito smiling together in a flower garden',
+      orientation: 'portrait',
+    },
+    {
+      src: `${G}/engagement-cultural.png`,
+      label: 'Together in colour',
+      alt: 'Mutua and Wahito embracing in colourful traditional clothing',
+      orientation: 'square',
+    },
   ] as Photo[],
 };
 

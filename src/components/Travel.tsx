@@ -1,6 +1,6 @@
 import AnimatedContent from './bits/AnimatedContent';
 import SectionHeading from './SectionHeading';
-import { travel } from '../config/site';
+import { event, travel } from '../config/site';
 
 const { lat, lon } = travel.map;
 const BBOX = [lon - 0.022, lat - 0.015, lon + 0.022, lat + 0.015].join(',');
@@ -54,8 +54,8 @@ export default function Travel() {
           </div>
 
           <p className="mt-4 text-sm italic text-ink/55">
-            The map is centred on Utawala. The directions link resolves the exact
-            church.
+            The map is centred on the ceremony venue. The reception is at{' '}
+            {event.receptionVenue}.
           </p>
         </AnimatedContent>
 
@@ -74,6 +74,16 @@ export default function Travel() {
                 <p className="mt-2 text-[1.02rem] leading-relaxed text-ink/72">
                   {block.detail}
                 </p>
+                {'link' in block ? (
+                  <a
+                    href={block.link}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="mt-3 inline-block font-ui text-xs uppercase tracking-[0.2em] text-gold-deep underline underline-offset-4"
+                  >
+                    Open reception map
+                  </a>
+                ) : null}
               </div>
             </AnimatedContent>
           ))}

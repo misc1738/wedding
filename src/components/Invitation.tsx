@@ -37,7 +37,7 @@ export default function Invitation() {
                 <figure className="relative h-full w-full">
                   <img
                     src="invitation.png"
-                    alt="Wedding invitation for Mutua and Wahito at PCEA St Luke, Utawala, Nairobi, 26 November 2026"
+                    alt="Wedding invitation for Wahito and Mutua at PCEA St Luke, Utawala, Nairobi, 26 November 2026"
                     className="block h-full w-full object-cover"
                     loading="lazy"
                     width={1024}
@@ -56,8 +56,8 @@ export default function Invitation() {
                       {[
                         ['When', event.dateLong],
                         ['Time', `${event.timeLabel} · guests seated by ${event.guestSeatedLabel}`],
-                        ['Where', event.venue],
-                        ['Area', event.area],
+                        ['Ceremony', `${event.venue}, ${event.area}`],
+                        ['Reception', `${event.receptionVenue}, ${event.receptionArea}`],
                       ].map(([term, value]) => (
                         <div key={term}>
                           <dt className="eyebrow text-gold-light/75">{term}</dt>
@@ -81,8 +81,8 @@ export default function Invitation() {
             {[
               ['When', event.dateLong],
               ['Time', `${event.timeLabel} · guests seated by ${event.guestSeatedLabel}`],
-              ['Where', event.venue],
-              ['Area', event.area],
+              ['Ceremony', `${event.venue}, ${event.area}`],
+              ['Reception', `${event.receptionVenue}, ${event.receptionArea}`],
               ['Countdown', event.dateLabel],
             ].map(([term, value]) => (
               <div

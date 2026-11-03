@@ -17,9 +17,9 @@ public/gallery/
 2. Add an entry to `photos.gallery` in `src/config/photos.ts` with the path, a
    short caption and alt text.
 
-Anything in this folder that is **not** listed in `photos.ts` is still picked up
-and appended to the end of the gallery automatically, so a quick drop-and-rebuild
-always works.
+Every photo shown in the gallery must be listed in `src/config/photos.ts`. This
+keeps the explicit captions, alt text and aspect ratio in sync with the files
+served from `public/`.
 
 - `orientation` controls the tile shape: `portrait` (3:4), `square`, `landscape` (4:3)
 - `photos.story` pairs one picture with each milestone in `site.ts`

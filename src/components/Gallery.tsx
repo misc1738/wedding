@@ -20,11 +20,6 @@ export type GalleryItem = {
  * Photos in `public/gallery/` that are not named in `src/config/photos.ts`
  * are still picked up and added after the curated ones.
  */
-const PHOTO_MODULES = import.meta.glob(
-  '../../public/gallery/*.{jpg,jpeg,png,webp,avif}',
-  { eager: true, query: '?url', import: 'default' },
-) as Record<string, string>;
-
 const FALLBACK: GalleryItem[] = [
   { label: 'The bouquet', art: 0, ratio: 'aspect-[3/4]' },
   { label: 'Table setting', art: 1, ratio: 'aspect-square' },
@@ -53,40 +48,20 @@ function toItem(photo: Photo): GalleryItem {
 }
 
 /**
- * Curated gallery photos first, then anything else dropped in the folder.
  * Images already used in the feature or story sections stay out of the
  * gallery, so the same frame is not presented repeatedly across the page.
  */
 function galleryItems(): GalleryItem[] {
-  const availableSources = new Set(Object.values(PHOTO_MODULES));
   const editorialSources = new Set([
     photos.feature.src,
     photos.featureDetail.src,
     ...photos.story.map((photo) => photo.src),
   ]);
   const curated = photos.gallery
-    .filter(
-      (photo) => availableSources.has(photo.src) && !editorialSources.has(photo.src),
-    )
+    .filter((photo) => !editorialSources.has(photo.src))
     .map(toItem);
-  const known = new Set(photos.gallery.map((photo) => photo.src));
 
-  const extras = Object.entries(PHOTO_MODULES)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([path, src]) => ({ path, src }))
-    .filter(({ src }) => !known.has(src))
-    .map(({ path, src }, index) => {
-      const name = path.split('/').pop() ?? 'photo';
-      const label = name.replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ');
-      return {
-        src,
-        alt: label,
-        label,
-        ratio: index % 3 === 1 ? 'aspect-[4/3]' : 'aspect-[3/4]',
-      };
-    });
-
-  return curated.length ? [...curated, ...extras] : FALLBACK;
+  return curated.length ? curated : FALLBACK;
 }
 
 function ArtTile({ art, label, ratio }: { art: number; label: string; ratio: string }) {

@@ -6,7 +6,7 @@ export type CalendarEvent = {
   description?: string;
 };
 
-/** 2026-11-26T09:00:00+03:00 -> 20261126T060000Z */
+/** 2026-11-26T08:30:00+03:00 -> 20261126T053000Z */
 function toIcsDate(iso: string): string {
   return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
@@ -34,7 +34,7 @@ function fold(line: string): string {
   return parts.join('\r\n');
 }
 
-export function buildIcs(events: CalendarEvent[], productId = '-//Mutua and Wahito//Wedding//EN'): string {
+export function buildIcs(events: CalendarEvent[], productId = '-//Wahito and Mutua//Wedding//EN'): string {
   const stamp = toIcsDate(new Date().toISOString());
 
   const body = events

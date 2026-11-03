@@ -6,9 +6,9 @@
  */
 
 export const couple = {
-  partnerA: 'Mutua',
-  partnerB: 'Wahito',
-  display: 'Mutua & Wahito',
+  partnerA: 'Wahito',
+  partnerB: 'Mutua',
+  display: 'Wahito & Mutua',
   greeting: 'Welcome to our beginning',
   /** Short line under the names in the hero. */
   tagline: 'Together with their families, they invite you to share in the joy of their wedding day.',
@@ -16,18 +16,21 @@ export const couple = {
 
 /**
  * The ceremony start moment, used for the countdown and the calendar file.
- * Nairobi is EAT = UTC+03:00, so this is 09:00 local.
+ * Nairobi is EAT = UTC+03:00, so this is 08:30 local.
  */
 export const event = {
-  startsAt: '2026-11-26T09:00:00+03:00',
+  startsAt: '2026-11-26T08:30:00+03:00',
   /** Shown everywhere as the big date. */
   dateLabel: '26 | 11 | 26',
   dateLong: 'Thursday, 26 November 2026',
-  timeLabel: '9:00 AM',
-  guestArrivalLabel: '8:45 AM',
-  guestSeatedLabel: '8:50 AM',
+  timeLabel: '8:30 AM',
+  guestArrivalLabel: '8:15 AM',
+  guestSeatedLabel: '8:15 AM',
   venue: 'PCEA St Luke',
   area: 'Utawala, Nairobi',
+  receptionVenue: 'Nairobi Baptist Westlands',
+  receptionArea: 'Westlands, Nairobi',
+  receptionMapsUrl: 'https://maps.app.goo.gl/n7GDPPDTDys5rpvR6',
   country: 'Kenya',
   /** Edit the countdown headline wording here. */
   countdownLabel: 'Until we say “I do”',
@@ -46,39 +49,34 @@ export const nav = [
 
 export const schedule = [
   {
-    time: '08:45',
+    time: '08:15',
     title: 'Guests arrive',
     detail: `Ushers will show you to your seat. Please be seated by ${event.guestSeatedLabel} so the ceremony can begin on time.`,
   },
   {
-    time: '09:00',
+    time: '08:30',
     title: 'Holy matrimony',
     detail: 'The service begins promptly. Please be seated before the bridal party enters.',
   },
   {
-    time: '11:45',
-    title: 'Signing & congratulations',
-    detail: 'The register is signed, and there is time for greetings and photographs.',
+    time: '09:30',
+    title: 'Signing',
+    detail: 'The register is signed after the ceremony.',
   },
   {
-    time: '12:30',
+    time: '10:00',
     title: 'Group photographs',
     detail: 'Family and friends are called by group. Your presence in these means a lot to us.',
   },
   {
-    time: '14:00',
+    time: '13:00',
     title: 'Reception',
-    detail: 'Lunch is served and the celebrations continue.',
+    detail: `The reception begins at ${event.receptionVenue}.`,
   },
   {
-    time: '17:00',
+    time: '16:00',
     title: 'Cake & first dance',
     detail: 'The cake is cut and the floor opens. Bring your appetite for dancing.',
-  },
-  {
-    time: '19:00',
-    title: 'Send-off',
-    detail: 'A last circle of sparklers as we leave. Thank you for spending the day with us.',
   },
 ];
 
@@ -89,7 +87,7 @@ export const story = {
     'Two years of the small things: taking the long way home, the inside jokes only we understand, and the countless random dates.',
   quote:
     'These are the few frames we did manage to keep, and the ones we want you to see as we count down to the day itself.',
-  attribution: 'Mutua & Wahito',
+  attribution: 'Wahito & Mutua',
   milestones: [
     { year: '2024', title: 'We met' },
     { year: '2026', title: 'She said yes' },
@@ -116,7 +114,7 @@ export const travel = {
   chapter: 'V',
   title: 'Travel & the venue',
   intro:
-    'PCEA St Luke sits in Utawala, about a 35-minute drive from Nairobi’s CBD depending on traffic.',
+    'The ceremony is at PCEA St Luke in Utawala, followed by the reception at Nairobi Baptist Westlands.',
   /** Centred on Utawala; OpenStreetMap does not carry this church as a named place. */
   map: {
     lat: -1.2843808,
@@ -137,6 +135,11 @@ export const travel = {
       heading: 'Parking',
       detail:
         `There is parking inside the church compound. Please arrive by ${event.guestArrivalLabel}.`,
+      },
+      {
+        heading: 'Reception',
+        detail: `${event.receptionVenue}, ${event.receptionArea}.`,
+        link: event.receptionMapsUrl,
       },
   ],
 };
@@ -192,8 +195,8 @@ export const rsvp = {
 };
 
 export const footer = {
-  closing: 'With love, Mutua & Wahito',
-  hashtag: '#MutuaMeetsWahito',
+  closing: 'With love, Wahito & Mutua',
+  hashtag: '#WahitoMeetsMutua',
   /** Edit this to your own contact if you would rather hear from guests directly. */
   contactLabel: 'Questions? Message either of us directly.',
 };

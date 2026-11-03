@@ -14,7 +14,10 @@ function buildEvents(): CalendarEvent[] {
       title: `${item.title} — ${couple.display}`,
       start: start.toISOString(),
       end: new Date(start.getTime() + HOUR_MS).toISOString(),
-      location: `${event.venue}, ${event.area}, ${event.country}`,
+      location:
+        item.title === 'Reception'
+          ? `${event.receptionVenue}, ${event.receptionArea}, ${event.country}`
+          : `${event.venue}, ${event.area}, ${event.country}`,
       description: item.detail,
     };
   });
